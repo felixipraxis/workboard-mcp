@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "workboard-v1",
+      "source": "packages/core/openapi/workboard-v1.api.openapi.json",
+      "integrity": "sha512-FCGSiwHRjr468DwsWQjuRFIiAJ6mGAhhG7ZBFe//hd9+G4Gan8K3NYsLm7hKQkJmubOtxRqeNFa7Qubgp8Aefg==",
+      "installerVersion": "6.1.3"
+    },
+    {
+      "identifier": "workboard-v2",
+      "source": "packages/core/openapi/workboard-v2.api.openapi.json",
+      "integrity": "sha512-yLRTlIGFDsK5q64KHLJV38Eq3icSGgqxNkpdvPkbiukek01L8R+r8APrcljojAknhONm2rdS9vS0xgzIVTU6Bw==",
+      "installerVersion": "6.1.3"
+    }
+  ]
+}

@@ -1,20 +1,26 @@
 {
-  "name": "@monorepo-template/core",
+  "name": "@workboard-mcp/core",
   "type": "module",
   "version": "0.0.0",
   "scripts": {
-    "test": "sst shell vitest"
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "exports": {
-    "./*": [
-      "./src/*/index.ts",
-      "./src/*.ts"
-    ]
+    "./*": "./src/*.ts"
   },
   "dependencies": {
-    "sst": "*"
-  },
-  "devDependencies": {
-    "vitest": "^2"
+    "@api/workboard-v1": "file:../../.api/apis/workboard-v1",
+    "@api/workboard-v2": "file:../../.api/apis/workboard-v2",
+    "@aws-sdk/client-rds-data": "*",
+    "@better-auth/drizzle-adapter": "*",
+    "@better-auth/oauth-provider": "*",
+    "@modelcontextprotocol/sdk": "*",
+    "better-auth": "*",
+    "drizzle-orm": "*",
+    "mcp-handler": "*",
+    "pg": "*",
+    "sst": "*",
+    "zod": "*"
   }
 }

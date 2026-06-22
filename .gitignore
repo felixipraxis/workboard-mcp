@@ -3,6 +3,11 @@ node_modules
 
 # sst
 .sst
+sst-env.d.ts
+**/sst-env.d.ts
+
+# typescript
+*.tsbuildinfo
 
 # tmp files
 .#*

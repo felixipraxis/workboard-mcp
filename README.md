@@ -1,81 +1,108 @@
-# Monorepo Template
+# Workboard MCP
 
-A template to create a monorepo SST v3 project. [Learn more](https://sst.dev/docs/set-up-a-monorepo).
+Serverless MCP server for Workboard, built with SST, Hono, Better Auth, Postgres, Drizzle, and generated `npx api` Workboard clients.
 
-## Get started
+## What Is Included
 
-1. Use this template to [create your own repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+- SST `aws.Function` Hono API behind an SST `aws.Router` CloudFront distribution.
+- Cloudflare DNS for `workboard-mcp.praxismedicines.dev` in production and `<stage>.workboard-mcp.praxismedicines.dev` for non-production stages.
+- Aurora PostgreSQL Serverless v2 with `min: 0 ACU` and local Postgres dev settings.
+- Drizzle ORM and Drizzle Kit migrations for Better Auth tables and application tables, with schemas split under `packages/core/src/db/schema/`.
+- A deploy-time SST migrator Lambda that runs checked-in Drizzle migrations during non-dev deploys.
+- Better Auth OAuth Provider for MCP OAuth 2.1, with internal Entra login through the generic OAuth plugin.
+- A post-login Workboard token step that verifies the personal Workboard token and stores it encrypted with AES-256-GCM.
+- Generated Workboard v1 and v2 SDKs under `.api/apis/*`, plus generated MCP tool metadata for all 63 documented operations.
 
-2. Clone the new repo.
+## Local Setup
 
-   ```bash
-   git clone <REPO_URL> MY_APP
-   cd MY_APP
-   ```
+```bash
+npm install
+cp .env.example .env
+npm run generate:workboard
+```
 
-3. Rename the files in the project to the name of your app.
+Fill in `.env` with Entra credentials and strong local secrets.
 
-   ```bash
-   npx replace-in-file '/monorepo-template/g' 'MY_APP' '**/*.*' --verbose
-   ```
+Start Postgres:
 
-4. Deploy!
+```bash
+npm run db:local
+```
 
-   ```bash
-   npm install
-   npx sst deploy
-   ```
+In another terminal, apply migrations and start Hono:
 
-5. Optionally, enable [_git push to deploy_](https://sst.dev/docs/console/#autodeploy).
+```bash
+npm run migrate
+npm run dev
+```
 
-## Usage
+The local API listens on `http://localhost:3000`.
 
-This template uses [npm Workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces). It has 3 packages to start with and you can add more it.
+## Useful Commands
 
-1. `core/`
+```bash
+npm run generate:workboard  # refresh Workboard specs, npx api SDKs, and MCP tool metadata
+npm run auth:generate       # refresh the generated Better Auth Drizzle schema
+npm run db:generate         # refresh auth schema, then create a Drizzle migration
+npm run db:check            # verify Drizzle migration snapshots and SQL
+npm run migrate             # apply Drizzle migrations for auth and app tables
+npm run typecheck
+npm test
+```
 
-   This is for any shared code. It's defined as modules. For example, there's the `Example` module.
+## Deploy Prerequisites
 
-   ```ts
-   export module Example {
-     export function hello() {
-       return "Hello, world!";
-     }
-   }
-   ```
+Set SST secrets:
 
-   That you can use across other packages using.
+```bash
+npx sst secret set BetterAuthSecret "..."
+npx sst secret set WorkboardTokenEncryptionKey "..."
+npx sst secret set EntraClientId "..."
+npx sst secret set EntraClientSecret "..."
+npx sst secret set EntraTenantId "..."
+```
 
-   ```ts
-   import { Example } from "@aws-monorepo/core/example";
+Append `--stage <stage>` to those commands when preparing a non-default SST stage.
 
-   Example.hello();
-   ```
+Set Cloudflare provider environment variables before deploy:
 
-   We also have [Vitest](https://vitest.dev/) configured for testing this package with the `sst shell` CLI.
+```bash
+export CLOUDFLARE_API_TOKEN=...
+export CLOUDFLARE_DEFAULT_ACCOUNT_ID=...
+```
 
-   ```bash
-   npm test
-   ```
+Deploy:
 
-2. `functions/`
+```bash
+npx sst deploy
+```
 
-   This is for your Lambda functions and it uses the `core` package as a local dependency.
+Router URLs are stage-aware. `production` and `prod` use `https://workboard-mcp.praxismedicines.dev`; every other SST stage uses `https://<stage>.workboard-mcp.praxismedicines.dev` after the stage name is normalized for DNS.
 
-3. `scripts/`
+Register an Entra redirect URI for each stage host: `<public-base-url>/api/auth/oauth2/callback/microsoft-entra-id`.
 
-    This is for any scripts that you can run on your SST app using the `sst shell` CLI and [`tsx`](https://www.npmjs.com/package/tsx). For example, you can run the example script using:
+Non-dev deploys run the `WorkboardDatabaseMigrator` Lambda before the API update. It copies the checked-in `drizzle/` folder into the function package and applies unapplied migrations with Drizzle's node-postgres migrator. Drizzle migration metadata is stored in `drizzle.__drizzle_migrations`; the application and auth tables are created by the SQL migrations in the default PostgreSQL schema.
 
-   ```bash
-   npm run shell src/example.ts
-   ```
+## OAuth Flow
 
-### Infrastructure
+MCP clients discover `/.well-known/oauth-protected-resource`, then use Better Auth’s OAuth Provider endpoints under `/api/auth/oauth2/*`.
 
-The `infra/` directory allows you to logically split the infrastructure of your app into separate files. This can be helpful as your app grows.
+The user flow is:
 
-In the template, we have an `api.ts`, and `storage.ts`. These export the created resources. And are imported in the `sst.config.ts`.
+1. MCP OAuth redirects to `/oauth/login`.
+2. `/oauth/login` starts generic OAuth with Microsoft Entra (`microsoft-entra-id`).
+3. After Entra, Better Auth resumes `/api/auth/oauth2/authorize`.
+4. If no Workboard token is stored, Better Auth redirects to `/oauth/workboard-token`.
+5. The token is verified with Workboard `GET /user`, encrypted, and stored in Postgres.
+6. Better Auth continues to `/oauth/consent`, then issues the OAuth code/token for the MCP client.
 
----
+## References
 
-**Join our community** [Discord](https://sst.dev/discord) | [YouTube](https://www.youtube.com/c/sst-dev) | [X.com](https://x.com/SST_dev)
+- Workboard API docs: https://apidocs.myworkboard.com/
+- SST Aurora: https://sst.dev/docs/component/aws/aurora/
+- SST Router and custom domains: https://sst.dev/docs/component/aws/router/
+- Better Auth OAuth Provider: https://www.better-auth.com/docs/plugins/oauth-provider
+- Better Auth Drizzle adapter: https://www.better-auth.com/docs/adapters/drizzle
+- Drizzle Kit migrations: https://orm.drizzle.team/docs/drizzle-kit-migrate
+- SST Drizzle migrations in CI/CD: https://sst.dev/docs/examples/#drizzle-migrations-in-cicd
+- MCP tools: https://modelcontextprotocol.io/specification/draft/server/tools

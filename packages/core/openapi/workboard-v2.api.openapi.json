@@ -1,0 +1,2088 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/attributes/definitions": {
+      "get": {
+        "description": "Returns every active custom field definition (id, name, fieldType, options for selects, objectType, and objectSubtype for work_item fields). Use this to discover attribute IDs and names before reading or writing values.\n\nOmit `objectType` to receive definitions across every object type in a single response.",
+        "operationId": "CustomAttributesController_getDefinitions",
+        "parameters": [
+          {
+            "name": "objectType",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single object type. Omit to return definitions for every object type.",
+            "schema": {
+              "enum": [
+                "objective",
+                "key_result",
+                "work_item",
+                "user"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgDefinitionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid objectType",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List custom field definitions for the org",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/{attributeId}/objects": {
+      "get": {
+        "description": "Returns objects in the caller's org that have a value set for the given custom attribute, scoped to objects the caller can view.\n\n**Scope:**\n- **Data-Admin** callers (including superusers) see every object org-wide.\n- **Non-Data-Admin** callers on objective / key_result / work_item attributes see every object they can view per-row (owner, team membership, explicit grant, public-to-internal-people, etc., as enforced by wobo-okr for OKRs and by Activity::canViewActionItem for work items). This matches the per-object GET /api/custom_attribute/:id endpoint.\n- **Non-Data-Admin** callers on user attributes see only their own user (at most one row). This is intentionally stricter than the per-object endpoint.\n\nResults are ordered by object ID descending. Values for multi-select fields are returned as string arrays; all other field types return a single string or null.\n\n**Pagination note:** for objective / key_result / work_item attributes a returned page may contain fewer than `limit` rows even when more results exist — per-row visibility filtering can exclude candidates from any given scan window. `nextOffset` reflects the underlying scan position (not the filtered row count); paginate until `nextOffset` is null.",
+        "operationId": "CustomAttributesController_getObjectsForAttribute",
+        "parameters": [
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Page size (1-100). Defaults to 50.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of rows to skip. Defaults to 0.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttributeObjectsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid attributeId, limit, or offset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Custom attribute not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List every object that has a value for a custom attribute",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/objectives/{id}": {
+      "get": {
+        "operationId": "CustomAttributesController_getObjectiveAttributes",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Objective (goal) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single attribute by ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeName",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single attribute by name (case-insensitive)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectCustomAttributesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objective not found, or the attributeId filter does not match a valid definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get custom attribute values for an Objective",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/objectives/{id}/{attributeId}": {
+      "post": {
+        "operationId": "CustomAttributesController_createObjectiveAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Objective (goal) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetAttributeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, or a select value that is not registered for this custom attribute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — you can view this Objective but cannot edit it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objective not found, or the attribute is not available on this Objective",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create (set) a custom attribute value on an Objective",
+        "tags": [
+          "custom-attributes"
+        ]
+      },
+      "put": {
+        "operationId": "CustomAttributesController_setObjectiveAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Objective (goal) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetAttributeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, or a select value that is not registered for this custom attribute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — you can view this Objective but cannot edit it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objective not found, or the attribute is not available on this Objective",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a custom attribute value on an Objective",
+        "tags": [
+          "custom-attributes"
+        ]
+      },
+      "delete": {
+        "operationId": "CustomAttributesController_deleteObjectiveAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Objective (goal) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Attribute value cleared successfully"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — you can view this Objective but cannot edit it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objective not found, or the attribute is not available on this Objective",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Clear a custom attribute value from an Objective",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/key-results/{id}": {
+      "get": {
+        "operationId": "CustomAttributesController_getKeyResultAttributes",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Key Result (metric) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single attribute by ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeName",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single attribute by name (case-insensitive)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectCustomAttributesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Key Result not found, or the attributeId filter does not match a valid definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get custom attribute values for a Key Result",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/key-results/{id}/{attributeId}": {
+      "post": {
+        "operationId": "CustomAttributesController_createKeyResultAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Key Result (metric) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetAttributeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, or a select value that is not registered for this custom attribute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — you can view this Key Result but cannot edit it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Key Result not found, or the attribute is not available on this Key Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create (set) a custom attribute value on a Key Result",
+        "tags": [
+          "custom-attributes"
+        ]
+      },
+      "put": {
+        "operationId": "CustomAttributesController_setKeyResultAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Key Result (metric) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetAttributeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, or a select value that is not registered for this custom attribute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — you can view this Key Result but cannot edit it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Key Result not found, or the attribute is not available on this Key Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a custom attribute value on a Key Result",
+        "tags": [
+          "custom-attributes"
+        ]
+      },
+      "delete": {
+        "operationId": "CustomAttributesController_deleteKeyResultAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Key Result (metric) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Attribute value cleared successfully"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — you can view this Key Result but cannot edit it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Key Result not found, or the attribute is not available on this Key Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Clear a custom attribute value from a Key Result",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/work-items/{id}": {
+      "get": {
+        "operationId": "CustomAttributesController_getWorkItemAttributes",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Work item (workstream) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single attribute by ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeName",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single attribute by name (case-insensitive)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectCustomAttributesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Work item not found, or the attributeId filter does not match a valid definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get custom attribute values for a Work Item",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/work-items/{id}/{attributeId}": {
+      "post": {
+        "operationId": "CustomAttributesController_createWorkItemAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Work item (workstream) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetAttributeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, or a select value that is not registered for this custom attribute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Work item not found, or the attribute is not available on this Work Item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create (set) a custom attribute value on a Work Item",
+        "tags": [
+          "custom-attributes"
+        ]
+      },
+      "put": {
+        "operationId": "CustomAttributesController_setWorkItemAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Work item (workstream) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetAttributeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, or a select value that is not registered for this custom attribute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Work item not found, or the attribute is not available on this Work Item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a custom attribute value on a Work Item",
+        "tags": [
+          "custom-attributes"
+        ]
+      },
+      "delete": {
+        "operationId": "CustomAttributesController_deleteWorkItemAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Work item (workstream) ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Attribute value cleared successfully"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Work item not found, or the attribute is not available on this Work Item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Clear a custom attribute value from a Work Item",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/users/{id}": {
+      "get": {
+        "description": "Returns custom attribute values for a user. A regular token may only read its own user ID. A **Data Admin Token** (issued via WBAdmin) may read any user in the org.",
+        "operationId": "CustomAttributesController_getUserAttributes",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single attribute by ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeName",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single attribute by name (case-insensitive)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectCustomAttributesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — requires a Data Admin Token to access another user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found, or the attributeId filter does not match a valid definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get custom attribute values for a User",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    },
+    "/attributes/users/{id}/{attributeId}": {
+      "post": {
+        "description": "Requires a **Data Admin Token** to write attributes on behalf of another user.",
+        "operationId": "CustomAttributesController_createUserAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetAttributeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, or a select value that is not registered for this custom attribute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — requires a Data Admin Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found, or the attribute is not available on this User",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create (set) a custom attribute value on a User",
+        "tags": [
+          "custom-attributes"
+        ]
+      },
+      "put": {
+        "description": "Requires a **Data Admin Token** to update attributes on behalf of another user.",
+        "operationId": "CustomAttributesController_setUserAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAttributeValue"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetAttributeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, or a select value that is not registered for this custom attribute",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — requires a Data Admin Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found, or the attribute is not available on this User",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a custom attribute value on a User",
+        "tags": [
+          "custom-attributes"
+        ]
+      },
+      "delete": {
+        "description": "Requires a **Data Admin Token** to delete attributes on behalf of another user.",
+        "operationId": "CustomAttributesController_deleteUserAttributeValue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "attributeId",
+            "required": true,
+            "in": "path",
+            "description": "Custom attribute definition ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Attribute value cleared successfully"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — requires a Data Admin Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found, or the attribute is not available on this User",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Clear a custom attribute value from a User",
+        "tags": [
+          "custom-attributes"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Workboard Public API v2",
+    "description": "**Authentication:** All endpoints require an `Authorization: Bearer <token>` header. Use an instant token or OAuth access token obtained from your Workboard instance. Click the **Authorize** button above and paste your token to try endpoints directly.\n\n**WorkBoard's production server API root for version two is https://www.myworkboard.com/wb/apis/v2**",
+    "version": "2.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "custom-attributes",
+      "description": "Read and write custom field values on Objectives, Key Results, Work Items, and Users"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://www.myworkboard.com/wb/apis/v2",
+      "description": "Workboard API"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "ApiErrorDetails": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "description": "Detailed validation or parsing errors when available.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidValues": {
+            "description": "Submitted custom attribute values that were rejected.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "upstreamStatus": {
+            "type": "number",
+            "description": "Original upstream HTTP status code when the failure came from a downstream service."
+          }
+        }
+      },
+      "ApiErrorResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code for the failure",
+            "example": 400
+          },
+          "error": {
+            "type": "string",
+            "description": "HTTP status label",
+            "example": "Bad Request"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable failure summary",
+            "example": "Validation failed"
+          },
+          "code": {
+            "type": "object",
+            "description": "Stable machine-readable code for client branching",
+            "example": "WB_REQUEST_VALIDATION_FAILED"
+          },
+          "details": {
+            "description": "Additional structured context about the failure",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ApiErrorDetails"
+              }
+            ]
+          }
+        },
+        "required": [
+          "statusCode",
+          "error",
+          "message",
+          "code"
+        ]
+      },
+      "CustomAttributeDefinition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Attribute definition ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Attribute name / label"
+          },
+          "fieldType": {
+            "type": "string",
+            "description": "Field type",
+            "enum": [
+              "text",
+              "textarea",
+              "single_select",
+              "multi_select"
+            ]
+          },
+          "options": {
+            "description": "Available options for single_select and multi_select fields; empty for text/textarea.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "objectType": {
+            "type": "string",
+            "description": "Object type this definition applies to",
+            "enum": [
+              "objective",
+              "key_result",
+              "work_item",
+              "user"
+            ]
+          },
+          "objectSubtype": {
+            "type": "string",
+            "description": "Comma-separated list of object subtypes this definition applies to. Only present for work_item definitions. Values: 0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "fieldType",
+          "options",
+          "objectType"
+        ]
+      },
+      "OrgDefinitionsResponse": {
+        "type": "object",
+        "properties": {
+          "definitions": {
+            "description": "Custom field definitions for the org",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomAttributeDefinition"
+            }
+          }
+        },
+        "required": [
+          "definitions"
+        ]
+      },
+      "AttributeObject": {
+        "type": "object",
+        "properties": {
+          "objectId": {
+            "type": "number",
+            "description": "ID of the object that has a value for the attribute"
+          },
+          "objectType": {
+            "type": "string",
+            "description": "Object type this row represents (always matches the definition)",
+            "enum": [
+              "objective",
+              "key_result",
+              "work_item",
+              "user"
+            ]
+          },
+          "value": {
+            "description": "Current value. String for text/textarea/single_select; string array for multi_select; null when unset.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the object. Present for objective, key_result, and work_item rows."
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name. Present only for user rows."
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name. Present only for user rows."
+          },
+          "email": {
+            "type": "string",
+            "description": "Email. Present only for user rows."
+          },
+          "objectSubtype": {
+            "type": "string",
+            "description": "Work item subtype (0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone). Present only for work_item rows when set."
+          }
+        },
+        "required": [
+          "objectId",
+          "objectType",
+          "value"
+        ]
+      },
+      "AttributeObjectsPagination": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number",
+            "description": "Page size used for this response"
+          },
+          "offset": {
+            "type": "number",
+            "description": "Offset that was applied to produce this page"
+          },
+          "nextOffset": {
+            "type": "number",
+            "description": "Offset to pass on the next request to retrieve the following page. Null when this is the final page.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "limit",
+          "offset",
+          "nextOffset"
+        ]
+      },
+      "AttributeObjectsResponse": {
+        "type": "object",
+        "properties": {
+          "attributeId": {
+            "type": "number",
+            "description": "Custom attribute definition ID that was queried"
+          },
+          "definition": {
+            "description": "The attribute definition metadata (echoed for convenience)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CustomAttributeDefinition"
+              }
+            ]
+          },
+          "objects": {
+            "description": "Objects in the caller's org that have a value for this attribute",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttributeObject"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/AttributeObjectsPagination"
+          }
+        },
+        "required": [
+          "attributeId",
+          "definition",
+          "objects",
+          "pagination"
+        ]
+      },
+      "CustomAttributeValue": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Attribute definition ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Attribute name / label"
+          },
+          "value": {
+            "description": "Current value. String for text/textarea/single_select; string array for multi_select; null when unset.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "nullable": true
+          },
+          "fieldType": {
+            "type": "string",
+            "description": "Field type",
+            "enum": [
+              "text",
+              "textarea",
+              "single_select",
+              "multi_select"
+            ]
+          },
+          "objectSubtype": {
+            "type": "string",
+            "description": "Object subtype (work items only). Values: 0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "value"
+        ]
+      },
+      "ObjectCustomAttributesResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Object ID"
+          },
+          "objectType": {
+            "type": "string",
+            "description": "Object type",
+            "enum": [
+              "objective",
+              "key_result",
+              "work_item",
+              "user"
+            ]
+          },
+          "customAttributes": {
+            "description": "Custom attribute values",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomAttributeValue"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "objectType",
+          "customAttributes"
+        ]
+      },
+      "SetAttributeValue": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "Value to set. Pass a string for text/textarea/single_select; pass a string array for multi_select.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
+        },
+        "required": [
+          "value"
+        ]
+      },
+      "SetAttributeResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "InvalidCustomAttributeValueErrorDetails": {
+        "type": "object",
+        "properties": {
+          "invalidValues": {
+            "description": "Submitted custom attribute values that were rejected.",
+            "example": [
+              "4"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "invalidValues"
+        ]
+      },
+      "InvalidCustomAttributeValueErrorResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code for the failure",
+            "example": 400
+          },
+          "error": {
+            "type": "string",
+            "description": "HTTP status label",
+            "example": "Bad Request"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable failure summary",
+            "example": "Validation failed"
+          },
+          "code": {
+            "type": "object",
+            "description": "Stable machine-readable code for client branching",
+            "example": "WB_REQUEST_VALIDATION_FAILED"
+          },
+          "details": {
+            "description": "Additional structured context about the failure",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InvalidCustomAttributeValueErrorDetails"
+              }
+            ]
+          }
+        },
+        "required": [
+          "statusCode",
+          "error",
+          "message",
+          "code"
+        ]
+      }
+    }
+  }
+}

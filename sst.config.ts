@@ -1,20 +1,27 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
 export default $config({
-  app(input) {
+  async app(input) {
+    const { isProductionStage } = await import("./infra/stage");
+    const stage = input?.stage;
+
     return {
-      name: "monorepo-template",
-      removal: input?.stage === "production" ? "retain" : "remove",
-      protect: ["production"].includes(input?.stage),
+      name: "workboard-mcp",
+      removal: isProductionStage(stage) ? "retain" : "remove",
+      protect: isProductionStage(stage),
       home: "aws",
+      providers: {
+        cloudflare: { package: "@pulumi/cloudflare", version: "6.17.0" },
+      },
     };
   },
   async run() {
-    const storage = await import("./infra/storage");
-    await import("./infra/api");
+    const api = await import("./infra/api");
 
     return {
-      MyBucket: storage.bucket.name,
+      ApiUrl: api.api.url,
+      PublicBaseUrl: api.publicBaseUrl,
+      DatabaseHost: api.database.host,
     };
   },
 });

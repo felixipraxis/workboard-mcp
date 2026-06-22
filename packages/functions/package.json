@@ -1,9 +1,19 @@
 {
-  "name": "@monorepo-template/functions",
+  "name": "@workboard-mcp/functions",
   "version": "0.0.0",
   "type": "module",
+  "scripts": {
+    "dev": "tsx src/local.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
   "dependencies": {
-    "@monorepo-template/core": "*",
+    "@better-auth/oauth-provider": "*",
+    "@hono/node-server": "*",
+    "@workboard-mcp/core": "*",
+    "dotenv": "*",
+    "drizzle-orm": "*",
+    "hono": "*",
+    "mcp-handler": "*",
     "sst": "*"
   },
   "devDependencies": {

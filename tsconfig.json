@@ -1,1 +1,8 @@
-{}
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/functions" },
+    { "path": "./packages/scripts" }
+  ]
+}
