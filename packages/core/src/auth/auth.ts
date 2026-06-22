@@ -71,7 +71,6 @@ export const auth = betterAuth({
         "openid",
         "profile",
         "email",
-        "offline_access",
         "workboard:read",
         "workboard:write",
       ],
