@@ -10,7 +10,6 @@ import {
 } from "@workboard-mcp/core/mcp/handler";
 import { upsertWorkboardCredential } from "@workboard-mcp/core/db/workboard-token";
 import { verifyWorkboardToken } from "@workboard-mcp/core/workboard/client";
-import { handle } from "hono/aws-lambda";
 import { Hono } from "hono";
 import { metadataCorsOptionsRequestHandler } from "mcp-handler";
 
@@ -45,21 +44,13 @@ app.options("/.well-known/oauth-authorization-server/*", (c) =>
 app.get("/.well-known/oauth-authorization-server/*", (c) =>
   authMetadata(c.req.raw),
 );
-app.options("/.well-known/openid-configuration", (c) =>
-  metadataOptions(),
-);
-app.get("/.well-known/openid-configuration", (c) =>
-  openIdMetadata(c.req.raw),
-);
-app.options("/.well-known/openid-configuration/*", (c) =>
-  metadataOptions(),
-);
+app.options("/.well-known/openid-configuration", (c) => metadataOptions());
+app.get("/.well-known/openid-configuration", (c) => openIdMetadata(c.req.raw));
+app.options("/.well-known/openid-configuration/*", (c) => metadataOptions());
 app.get("/.well-known/openid-configuration/*", (c) =>
   openIdMetadata(c.req.raw),
 );
-app.options("/.well-known/oauth-protected-resource", (c) =>
-  metadataOptions(),
-);
+app.options("/.well-known/oauth-protected-resource", (c) => metadataOptions());
 app.get("/.well-known/oauth-protected-resource", (c) =>
   workboardProtectedResourceHandler(c.req.raw),
 );
@@ -76,20 +67,25 @@ app.get("/oauth/login", (c) =>
 
 app.get("/oauth/workboard-token", async (c) => {
   const session = await getSession(c.req.raw.headers);
-  if (!session) return c.redirect(`/oauth/login?${oauthQueryString(c.req.raw)}`);
+  if (!session)
+    return c.redirect(`/oauth/login?${oauthQueryString(c.req.raw)}`);
 
   return c.html(workboardTokenPage(oauthQueryString(c.req.raw)));
 });
 
 app.post("/oauth/workboard-token", async (c) => {
   const session = await getSession(c.req.raw.headers);
-  if (!session) return c.redirect(`/oauth/login?${oauthQueryString(c.req.raw)}`);
+  if (!session)
+    return c.redirect(`/oauth/login?${oauthQueryString(c.req.raw)}`);
 
   const body = await c.req.parseBody();
   const token = String(body.token ?? "").trim();
 
   if (!token) {
-    return c.html(workboardTokenPage(oauthQueryString(c.req.raw), "Token is required."), 400);
+    return c.html(
+      workboardTokenPage(oauthQueryString(c.req.raw), "Token is required."),
+      400,
+    );
   }
 
   try {
@@ -103,7 +99,10 @@ app.post("/oauth/workboard-token", async (c) => {
       error instanceof Error
         ? error.message
         : "Could not verify that Workboard token.";
-    return c.html(workboardTokenPage(oauthQueryString(c.req.raw), message), 400);
+    return c.html(
+      workboardTokenPage(oauthQueryString(c.req.raw), message),
+      400,
+    );
   }
 
   return c.html(continueOAuthPage(oauthQueryString(c.req.raw)));
@@ -114,8 +113,6 @@ app.get("/oauth/consent", (c) =>
 );
 
 app.all("/mcp", (c) => authenticatedMcpHandler(c.req.raw));
-
-export const handler = handle(app);
 
 async function getSession(headers: Headers) {
   return auth.api.getSession({ headers });

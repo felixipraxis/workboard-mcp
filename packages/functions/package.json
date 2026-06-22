@@ -14,7 +14,8 @@
     "drizzle-orm": "*",
     "hono": "*",
     "mcp-handler": "*",
-    "sst": "*"
+    "sst": "*",
+    "tsx": "*"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8"

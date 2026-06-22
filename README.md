@@ -1,10 +1,11 @@
 # Workboard MCP
 
-Serverless MCP server for Workboard, built with SST, Hono, Better Auth, Postgres, Drizzle, and generated `npx api` Workboard clients.
+Containerized MCP server for Workboard, built with SST, ECS Fargate, Hono, Better Auth, Postgres, Drizzle, and generated `npx api` Workboard clients.
 
 ## What Is Included
 
-- SST `aws.Function` Hono API behind an SST `aws.Router` CloudFront distribution.
+- SST `aws.Service` Hono API running on ECS Fargate behind an ALB, fronted by an SST `aws.Router`.
+- Router WAF protection with AWS managed rules, IP rate limiting, and blocked-request logs.
 - Cloudflare DNS for `workboard-mcp.praxismedicines.dev` in production and `<stage>.workboard-mcp.praxismedicines.dev` for non-production stages.
 - Aurora PostgreSQL Serverless v2 with `min: 0 ACU` and local Postgres dev settings.
 - Drizzle ORM and Drizzle Kit migrations for Better Auth tables and application tables, with schemas split under `packages/core/src/db/schema/`.
@@ -36,7 +37,7 @@ npm run migrate
 npm run dev
 ```
 
-The local API listens on `http://localhost:3000`.
+The local API listens on `http://localhost:3000`. `sst dev` starts the Hono service locally through `npm run dev` and skips the deployed HTTPS Router, WAF, and custom domain.
 
 ## Useful Commands
 
@@ -77,11 +78,11 @@ Deploy:
 npx sst deploy
 ```
 
-Router URLs are stage-aware. `production` and `prod` use `https://workboard-mcp.praxismedicines.dev`; every other SST stage uses `https://<stage>.workboard-mcp.praxismedicines.dev` after the stage name is normalized for DNS.
+Router URLs are stage-aware. `production` and `prod` use `https://workboard-mcp.praxismedicines.dev`; every other SST stage uses `https://<stage>.workboard-mcp.praxismedicines.dev` after the stage name is normalized for DNS. Deployed stages also create an HTTPS ALB origin at `origin.<public-domain>` for CloudFront to reach the ECS service. The ECS service listens on port `3000`, and the load balancer health-checks `/health`.
 
 Register an Entra redirect URI for each stage host: `<public-base-url>/api/auth/oauth2/callback/microsoft-entra-id`.
 
-Non-dev deploys run the `WorkboardDatabaseMigrator` Lambda before the API update. It copies the checked-in `drizzle/` folder into the function package and applies unapplied migrations with Drizzle's node-postgres migrator. Drizzle migration metadata is stored in `drizzle.__drizzle_migrations`; the application and auth tables are created by the SQL migrations in the default PostgreSQL schema.
+Non-dev deploys run the `WorkboardDatabaseMigrator` Lambda before the ECS service update. It copies the checked-in `drizzle/` folder into the function package and applies unapplied migrations with Drizzle's node-postgres migrator. Drizzle migration metadata is stored in `drizzle.__drizzle_migrations`; the application and auth tables are created by the SQL migrations in the default PostgreSQL schema.
 
 ## OAuth Flow
 
@@ -100,7 +101,9 @@ The user flow is:
 
 - Workboard API docs: https://apidocs.myworkboard.com/
 - SST Aurora: https://sst.dev/docs/component/aws/aurora/
-- SST Router and custom domains: https://sst.dev/docs/component/aws/router/
+- SST Service: https://sst.dev/docs/component/aws/service/
+- SST Router: https://sst.dev/docs/component/aws/router/
+- SST Router WAF: https://sst.dev/docs/examples/#router-with-waf
 - Better Auth OAuth Provider: https://www.better-auth.com/docs/plugins/oauth-provider
 - Better Auth Drizzle adapter: https://www.better-auth.com/docs/adapters/drizzle
 - Drizzle Kit migrations: https://orm.drizzle.team/docs/drizzle-kit-migrate

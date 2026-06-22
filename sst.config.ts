@@ -19,7 +19,8 @@ export default $config({
     const api = await import("./infra/api");
 
     return {
-      ApiUrl: api.api.url,
+      ApiUrl: api.apiUrl,
+      ServiceUrl: api.api.url,
       PublicBaseUrl: api.publicBaseUrl,
       DatabaseHost: api.database.host,
     };
