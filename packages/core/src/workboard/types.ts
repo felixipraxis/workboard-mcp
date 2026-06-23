@@ -47,10 +47,10 @@ export interface WorkboardToolInput {
   body?: unknown;
 }
 
-export interface WorkboardToolOutput extends Record<string, unknown> {
-  ok: boolean;
+export type WorkboardToolOutput = Record<string, unknown>;
+
+export interface WorkboardToolError extends Record<string, unknown> {
+  error: string;
   status: number;
-  url: string;
-  headers: Record<string, string>;
-  body?: unknown;
+  details?: unknown;
 }

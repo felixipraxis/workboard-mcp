@@ -58,7 +58,7 @@ export function registerWorkboardTools(server: McpServer) {
             content: [
               {
                 type: "text" as const,
-                text: formatToolText(output.body ?? output),
+                text: formatToolText(output),
               },
             ],
           };
@@ -70,7 +70,7 @@ export function registerWorkboardTools(server: McpServer) {
               content: [
                 {
                   type: "text" as const,
-                  text: formatToolText(error.output.body ?? error.output),
+                  text: formatToolText(error.output),
                 },
               ],
             };

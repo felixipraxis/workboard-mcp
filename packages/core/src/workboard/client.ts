@@ -2,6 +2,7 @@ import { getWorkboardBaseUrl } from "../config";
 import type { WorkboardCredential } from "../db/workboard-token";
 import type {
   WorkboardOperation,
+  WorkboardToolError,
   WorkboardToolInput,
   WorkboardToolOutput,
 } from "./types";
@@ -9,7 +10,7 @@ import type {
 export class WorkboardApiError extends Error {
   constructor(
     message: string,
-    readonly output: WorkboardToolOutput,
+    readonly output: WorkboardToolError,
   ) {
     super(message);
     this.name = "WorkboardApiError";
@@ -49,16 +50,20 @@ export async function callWorkboardOperation(input: {
   }
 
   const response = await fetch(url, init);
-  const output = await responseToOutput(response, url.toString());
+  const body = await responseBody(response);
 
   if (!response.ok) {
     throw new WorkboardApiError(
       `Workboard ${input.operation.method} ${input.operation.path} failed with ${response.status}`,
-      output,
+      {
+        error: `Workboard ${input.operation.method} ${input.operation.path} failed with ${response.status}`,
+        status: response.status,
+        ...(body !== undefined ? { details: body } : {}),
+      },
     );
   }
 
-  return output;
+  return normalizeToolOutput(body);
 }
 
 export async function verifyWorkboardToken(input: {
@@ -151,27 +156,20 @@ function appendQueryValue(params: URLSearchParams, key: string, value: unknown) 
   params.append(key, String(value));
 }
 
-async function responseToOutput(
-  response: Response,
-  url: string,
-): Promise<WorkboardToolOutput> {
-  const headers = Object.fromEntries(response.headers.entries());
+async function responseBody(response: Response) {
   const text = await response.text();
   const contentType = response.headers.get("content-type") ?? "";
-  const body =
-    text.length === 0
-      ? undefined
-      : contentType.includes("json")
-        ? safeJson(text)
-        : text;
+  if (text.length === 0) return undefined;
+  return contentType.includes("json") ? safeJson(text) : text;
+}
 
-  return {
-    ok: response.ok,
-    status: response.status,
-    url,
-    headers,
-    ...(body !== undefined ? { body } : {}),
-  };
+function normalizeToolOutput(body: unknown): WorkboardToolOutput {
+  if (body === undefined || body === null) return {};
+  if (typeof body === "object" && !Array.isArray(body)) {
+    return body as WorkboardToolOutput;
+  }
+
+  return { data: body };
 }
 
 function safeJson(text: string) {

@@ -28,11 +28,9 @@ describe("Workboard API client", () => {
         token: "wb-token",
         baseUrl: "https://workboard.example.test/wb/apis",
       }),
-    ).resolves.toMatchObject({
-      ok: true,
-      status: 200,
-      url: "https://workboard.example.test/wb/apis/user",
-      body: { id: 123, email: "user@example.com" },
+    ).resolves.toEqual({
+      id: 123,
+      email: "user@example.com",
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -94,11 +92,7 @@ describe("Workboard API client", () => {
           body: { name: "Updated" },
         },
       }),
-    ).resolves.toMatchObject({
-      ok: true,
-      status: 204,
-      url: "https://workboard.example.test/wb/apis/v2/things/abc%20123?tag=north&tag=south&filter=%7B%22active%22%3Atrue%7D",
-    });
+    ).resolves.toEqual({});
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0] as unknown as [
@@ -113,5 +107,119 @@ describe("Workboard API client", () => {
     expect(headers.get("x-request-source")).toBe("mcp-test");
     expect(headers.get("content-type")).toBe("application/json");
     expect(init.body).toBe(JSON.stringify({ name: "Updated" }));
+  });
+
+  it("returns only the parsed response body for Workboard tool calls", async () => {
+    const fetchMock = vi.fn(async () => {
+      return Response.json({
+        success: true,
+        message: "",
+        data: {
+          totalCount: 1,
+          activity: [{ ai_id: "15180100", ai_description: "Ship the fix" }],
+        },
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { callWorkboardOperation } = await import("./client");
+
+    await expect(
+      callWorkboardOperation({
+        operation: {
+          name: "workboard_v1_get_activity",
+          version: "v1",
+          method: "GET",
+          path: "/activity",
+          title: "Get activity",
+          description: "GET /activity",
+          tags: [],
+          requiredScope: "workboard:read",
+          inputSchema: { type: "object" },
+          outputSchema: { type: "object" },
+          annotations: {
+            title: "Get activity",
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: true,
+          },
+        },
+        credential: {
+          userId: "user_123",
+          token: "real-token",
+          baseUrl: "https://workboard.example.test/wb/apis",
+          v2BaseUrl: "https://workboard.example.test/wb/apis/v2",
+          lastVerifiedAt: null,
+        },
+        args: {},
+      }),
+    ).resolves.toEqual({
+      success: true,
+      message: "",
+      data: {
+        totalCount: 1,
+        activity: [{ ai_id: "15180100", ai_description: "Ship the fix" }],
+      },
+    });
+  });
+
+  it("throws compact errors with parsed Workboard details and no response headers", async () => {
+    const fetchMock = vi.fn(async () => {
+      return Response.json(
+        { success: false, message: "Invalid activity owner" },
+        {
+          status: 400,
+          headers: {
+            "set-cookie": "PHPSESSID=do-not-return",
+            "x-debug": "do-not-return",
+          },
+        },
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { callWorkboardOperation, WorkboardApiError } = await import("./client");
+
+    const operation = {
+      name: "workboard_v1_get_activity",
+      version: "v1",
+      method: "GET",
+      path: "/activity",
+      title: "Get activity",
+      description: "GET /activity",
+      tags: [],
+      requiredScope: "workboard:read",
+      inputSchema: { type: "object" },
+      outputSchema: { type: "object" },
+      annotations: {
+        title: "Get activity",
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    } satisfies WorkboardOperation;
+
+    await expect(
+      callWorkboardOperation({
+        operation,
+        credential: {
+          userId: "user_123",
+          token: "real-token",
+          baseUrl: "https://workboard.example.test/wb/apis",
+          v2BaseUrl: "https://workboard.example.test/wb/apis/v2",
+          lastVerifiedAt: null,
+        },
+        args: {},
+      }),
+    ).rejects.toMatchObject({
+      name: "WorkboardApiError",
+      output: {
+        error: "Workboard GET /activity failed with 400",
+        status: 400,
+        details: { success: false, message: "Invalid activity owner" },
+      },
+    } satisfies Partial<InstanceType<typeof WorkboardApiError>>);
   });
 });
