@@ -24,6 +24,12 @@ export type JsonSchema = {
   description?: string;
   enum?: readonly unknown[];
   const?: unknown;
+  example?: unknown;
+  examples?: readonly unknown[] | Record<string, unknown>;
+  format?: string;
+  readOnly?: boolean;
+  writeOnly?: boolean;
+  deprecated?: boolean;
   oneOf?: readonly JsonSchema[];
   anyOf?: readonly JsonSchema[];
   allOf?: readonly JsonSchema[];

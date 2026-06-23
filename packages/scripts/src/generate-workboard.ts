@@ -23,6 +23,11 @@ type Operation = {
     required?: boolean;
     content?: Record<string, { schema?: unknown }>;
   };
+  responses?: Record<string, ResponseObject>;
+};
+
+type ResponseObject = {
+  content?: Record<string, { schema?: unknown }>;
 };
 
 type Parameter = {
@@ -170,21 +175,7 @@ function collectOperations(
         contentType: requestContentType(operation),
         sdkMethodName: sdkMethodMap.get(`${method.toUpperCase()} ${openApiPath}`),
         inputSchema,
-        outputSchema: {
-          type: "object",
-          additionalProperties: false,
-          required: ["ok", "status", "url"],
-          properties: {
-            ok: { type: "boolean" },
-            status: { type: "integer" },
-            url: { type: "string" },
-            headers: {
-              type: "object",
-              additionalProperties: { type: "string" },
-            },
-            body: {},
-          },
-        },
+        outputSchema: buildOutputSchema(spec, operation),
         annotations: {
           title: titleFromOperation(operation, method, openApiPath),
           readOnlyHint: readOnly,
@@ -198,6 +189,90 @@ function collectOperations(
   }
 
   return operations;
+}
+
+function buildOutputSchema(spec: OpenApiSpec, operation: Operation) {
+  const response = successResponse(operation);
+  const schema = response ? responseBodySchema(response) : undefined;
+  if (!schema) {
+    return {
+      type: "object",
+      additionalProperties: false,
+      properties: {},
+    };
+  }
+
+  return normalizeOutputSchema(dereference(spec, schema));
+}
+
+function successResponse(operation: Operation) {
+  const responses = operation.responses ?? {};
+
+  for (const status of ["200", "201", "202", "204", "default"]) {
+    if (responses[status]) return responses[status];
+  }
+
+  const successStatus = Object.keys(responses)
+    .filter((status) => /^2\d\d$/.test(status))
+    .sort()[0];
+
+  return successStatus ? responses[successStatus] : undefined;
+}
+
+function responseBodySchema(response: ResponseObject) {
+  const content = response.content;
+  if (!content) return undefined;
+  return (
+    content["application/json"]?.schema ??
+    content["application/problem+json"]?.schema ??
+    Object.values(content)[0]?.schema
+  );
+}
+
+function normalizeOutputSchema(schema: unknown): unknown {
+  const normalized = allowAdditionalOutputProperties(schema);
+  const record = objectSchemaRecord(normalized);
+  const schemaType = Array.isArray(record.type) ? record.type[0] : record.type;
+
+  if (
+    schemaType === "object" ||
+    record.properties ||
+    record.oneOf ||
+    record.anyOf ||
+    record.allOf
+  ) {
+    return record;
+  }
+
+  return {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      data: record,
+    },
+  };
+}
+
+function allowAdditionalOutputProperties(schema: unknown): unknown {
+  if (Array.isArray(schema)) {
+    return schema.map((item) => allowAdditionalOutputProperties(item));
+  }
+
+  if (!schema || typeof schema !== "object") return schema;
+
+  const record = schema as Record<string, unknown>;
+  const copy: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(record)) {
+    copy[key] = allowAdditionalOutputProperties(value);
+  }
+
+  const schemaType = Array.isArray(copy.type) ? copy.type[0] : copy.type;
+  if (schemaType === "object" || copy.properties) {
+    copy.type = "object";
+    copy.additionalProperties = true;
+  }
+
+  return copy;
 }
 
 function buildInputSchema(spec: OpenApiSpec, operation: Operation) {

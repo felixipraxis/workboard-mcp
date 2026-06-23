@@ -66,30 +66,358 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "user": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    },
+                    "user_name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "wb_email": {
+                      "type": "string"
+                    },
+                    "cell_num": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "create_at": {
+                      "description": "The timestamp for when the user was created. Is a `string` when `include=org_members` is used.",
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ]
+                    },
+                    "last_visited_at": {
+                      "type": "string"
+                    },
+                    "picture": {
+                      "type": "string",
+                      "description": "The url for the image."
+                    },
+                    "time_zone": {
+                      "type": "string"
+                    },
+                    "external_id": {
+                      "type": "string"
+                    },
+                    "created_from": {
+                      "type": "string"
+                    },
+                    "org_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "org_user_roles": {
+                      "description": "When `include=org_members` is used on the `GET /wb/apis/user` endpoint, returns a comma separated numerical list of `org_roles`.<br>Roles are: 6 = Org Member, 7 = Org Admin, 8 = Org Root, 9 = Org Accountant, 10 = Org Data-Admin, 11 = Org HR, 12 = Org Results, 13 = Engagement Metrics, 14 = Org IT Admin, 15 = Org WorkBoard Coach",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "manager": {
+                      "oneOf": [
+                        {
+                          "type": "boolean",
+                          "description": "Returns false if user does not have a manager."
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              },
+                              "first_name": {
+                                "type": "string"
+                              },
+                              "last_name": {
+                                "type": "string"
+                              },
+                              "picture": {
+                                "type": "string"
+                              },
+                              "external_id": {
+                                "type": "string"
+                              },
+                              "role": {
+                                "description": "1: Direct Manager, 2: Dotted Manager",
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        }
+                      ]
+                    },
+                    "user_reports_to_me": {
+                      "description": "Returned on the `GET /wb/apis/user` request when `user_id` is set and `include=org_reports` is set.",
+                      "nullable": true,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "org_role": {
+                            "description": "Either `direct` or `dotted`",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "is_read_only": {
+                      "type": "boolean",
+                      "description": "Whether the user is read-only for those tenants with read-only enabled. If true, the user is a read-only user. If false, the user is a full user."
+                    },
+                    "profile": {
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "company": {
+                          "type": "string"
+                        },
+                        "custom_attributes": {
+                          "type": "array",
+                          "description": "Returned when `custom_attributes=1` is passed in the query string.",
+                          "nullable": true,
+                          "items": {
+                            "properties": {
+                              "id": {
+                                "description": "The unique ID for the custom attribute",
+                                "type": "string"
+                              },
+                              "name": {
+                                "description": "The unique name for the custom attribute",
+                                "type": "string"
+                              },
+                              "value": {
+                                "description": "The value for the custom attribute",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "user_name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "wb_email": {
+                        "type": "string"
+                      },
+                      "cell_num": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "create_at": {
+                        "description": "The timestamp for when the user was created. Is a `string` when `include=org_members` is used.",
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ]
+                      },
+                      "last_visited_at": {
+                        "type": "string"
+                      },
+                      "picture": {
+                        "type": "string",
+                        "description": "The url for the image."
+                      },
+                      "time_zone": {
+                        "type": "string"
+                      },
+                      "external_id": {
+                        "type": "string"
+                      },
+                      "created_from": {
+                        "type": "string"
+                      },
+                      "org_id": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "org_user_roles": {
+                        "description": "When `include=org_members` is used on the `GET /wb/apis/user` endpoint, returns a comma separated numerical list of `org_roles`.<br>Roles are: 6 = Org Member, 7 = Org Admin, 8 = Org Root, 9 = Org Accountant, 10 = Org Data-Admin, 11 = Org HR, 12 = Org Results, 13 = Engagement Metrics, 14 = Org IT Admin, 15 = Org WorkBoard Coach",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "manager": {
+                        "oneOf": [
+                          {
+                            "type": "boolean",
+                            "description": "Returns false if user does not have a manager."
+                          },
+                          {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "user_id": {
+                                  "type": "string"
+                                },
+                                "email": {
+                                  "type": "string"
+                                },
+                                "first_name": {
+                                  "type": "string"
+                                },
+                                "last_name": {
+                                  "type": "string"
+                                },
+                                "picture": {
+                                  "type": "string"
+                                },
+                                "external_id": {
+                                  "type": "string"
+                                },
+                                "role": {
+                                  "description": "1: Direct Manager, 2: Dotted Manager",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          }
+                        ]
+                      },
+                      "user_reports_to_me": {
+                        "description": "Returned on the `GET /wb/apis/user` request when `user_id` is set and `include=org_reports` is set.",
+                        "nullable": true,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "user_id": {
+                              "type": "string"
+                            },
+                            "org_role": {
+                              "description": "Either `direct` or `dotted`",
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      },
+                      "is_read_only": {
+                        "type": "boolean",
+                        "description": "Whether the user is read-only for those tenants with read-only enabled. If true, the user is a read-only user. If false, the user is a full user."
+                      },
+                      "profile": {
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "custom_attributes": {
+                            "type": "array",
+                            "description": "Returned when `custom_attributes=1` is passed in the query string.",
+                            "nullable": true,
+                            "items": {
+                              "properties": {
+                                "id": {
+                                  "description": "The unique ID for the custom attribute",
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "description": "The unique name for the custom attribute",
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "description": "The value for the custom attribute",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object",
+                              "additionalProperties": true
+                            }
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get an individual user, or all users with a Data-Admin token.",
@@ -183,30 +511,189 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "wb_email": {
+                  "type": "string"
+                },
+                "cell_num": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "create_at": {
+                  "description": "The timestamp for when the user was created. Is a `string` when `include=org_members` is used.",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                },
+                "last_visited_at": {
+                  "type": "string"
+                },
+                "picture": {
+                  "type": "string",
+                  "description": "The url for the image."
+                },
+                "time_zone": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "org_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "org_user_roles": {
+                  "description": "When `include=org_members` is used on the `GET /wb/apis/user` endpoint, returns a comma separated numerical list of `org_roles`.<br>Roles are: 6 = Org Member, 7 = Org Admin, 8 = Org Root, 9 = Org Accountant, 10 = Org Data-Admin, 11 = Org HR, 12 = Org Results, 13 = Engagement Metrics, 14 = Org IT Admin, 15 = Org WorkBoard Coach",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "manager": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "description": "Returns false if user does not have a manager."
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "first_name": {
+                            "type": "string"
+                          },
+                          "last_name": {
+                            "type": "string"
+                          },
+                          "picture": {
+                            "type": "string"
+                          },
+                          "external_id": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "description": "1: Direct Manager, 2: Dotted Manager",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  ]
+                },
+                "user_reports_to_me": {
+                  "description": "Returned on the `GET /wb/apis/user` request when `user_id` is set and `include=org_reports` is set.",
+                  "nullable": true,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "org_role": {
+                        "description": "Either `direct` or `dotted`",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "is_read_only": {
+                  "type": "boolean",
+                  "description": "Whether the user is read-only for those tenants with read-only enabled. If true, the user is a read-only user. If false, the user is a full user."
+                },
+                "profile": {
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
+                    },
+                    "custom_attributes": {
+                      "type": "array",
+                      "description": "Returned when `custom_attributes=1` is passed in the query string.",
+                      "nullable": true,
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "description": "The unique ID for the custom attribute",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "The unique name for the custom attribute",
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "The value for the custom attribute",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Data-Admin: Create a user",
@@ -266,29 +753,7 @@ export const workboardOperations = [
     "outputSchema": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
-      "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+      "properties": {}
     },
     "annotations": {
       "title": "Deactivate a user",
@@ -344,30 +809,189 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "wb_email": {
+                  "type": "string"
+                },
+                "cell_num": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "create_at": {
+                  "description": "The timestamp for when the user was created. Is a `string` when `include=org_members` is used.",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                },
+                "last_visited_at": {
+                  "type": "string"
+                },
+                "picture": {
+                  "type": "string",
+                  "description": "The url for the image."
+                },
+                "time_zone": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "org_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "org_user_roles": {
+                  "description": "When `include=org_members` is used on the `GET /wb/apis/user` endpoint, returns a comma separated numerical list of `org_roles`.<br>Roles are: 6 = Org Member, 7 = Org Admin, 8 = Org Root, 9 = Org Accountant, 10 = Org Data-Admin, 11 = Org HR, 12 = Org Results, 13 = Engagement Metrics, 14 = Org IT Admin, 15 = Org WorkBoard Coach",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "manager": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "description": "Returns false if user does not have a manager."
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "first_name": {
+                            "type": "string"
+                          },
+                          "last_name": {
+                            "type": "string"
+                          },
+                          "picture": {
+                            "type": "string"
+                          },
+                          "external_id": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "description": "1: Direct Manager, 2: Dotted Manager",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  ]
+                },
+                "user_reports_to_me": {
+                  "description": "Returned on the `GET /wb/apis/user` request when `user_id` is set and `include=org_reports` is set.",
+                  "nullable": true,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "org_role": {
+                        "description": "Either `direct` or `dotted`",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "is_read_only": {
+                  "type": "boolean",
+                  "description": "Whether the user is read-only for those tenants with read-only enabled. If true, the user is a read-only user. If false, the user is a full user."
+                },
+                "profile": {
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
+                    },
+                    "custom_attributes": {
+                      "type": "array",
+                      "description": "Returned when `custom_attributes=1` is passed in the query string.",
+                      "nullable": true,
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "description": "The unique ID for the custom attribute",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "The unique name for the custom attribute",
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "The value for the custom attribute",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Data-Admin: Get user by useridpath",
@@ -498,30 +1122,189 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "wb_email": {
+                  "type": "string"
+                },
+                "cell_num": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "create_at": {
+                  "description": "The timestamp for when the user was created. Is a `string` when `include=org_members` is used.",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                },
+                "last_visited_at": {
+                  "type": "string"
+                },
+                "picture": {
+                  "type": "string",
+                  "description": "The url for the image."
+                },
+                "time_zone": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "org_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "org_user_roles": {
+                  "description": "When `include=org_members` is used on the `GET /wb/apis/user` endpoint, returns a comma separated numerical list of `org_roles`.<br>Roles are: 6 = Org Member, 7 = Org Admin, 8 = Org Root, 9 = Org Accountant, 10 = Org Data-Admin, 11 = Org HR, 12 = Org Results, 13 = Engagement Metrics, 14 = Org IT Admin, 15 = Org WorkBoard Coach",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "manager": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "description": "Returns false if user does not have a manager."
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "first_name": {
+                            "type": "string"
+                          },
+                          "last_name": {
+                            "type": "string"
+                          },
+                          "picture": {
+                            "type": "string"
+                          },
+                          "external_id": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "description": "1: Direct Manager, 2: Dotted Manager",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  ]
+                },
+                "user_reports_to_me": {
+                  "description": "Returned on the `GET /wb/apis/user` request when `user_id` is set and `include=org_reports` is set.",
+                  "nullable": true,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "org_role": {
+                        "description": "Either `direct` or `dotted`",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "is_read_only": {
+                  "type": "boolean",
+                  "description": "Whether the user is read-only for those tenants with read-only enabled. If true, the user is a read-only user. If false, the user is a full user."
+                },
+                "profile": {
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
+                    },
+                    "custom_attributes": {
+                      "type": "array",
+                      "description": "Returned when `custom_attributes=1` is passed in the query string.",
+                      "nullable": true,
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "description": "The unique ID for the custom attribute",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "The unique name for the custom attribute",
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "The value for the custom attribute",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update a user and/or reactivate a user.",
@@ -567,30 +1350,389 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "wb_email": {
+                  "type": "string"
+                },
+                "cell_num": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "create_at": {
+                  "type": "integer"
+                },
+                "last_visited_at": {
+                  "type": "string"
+                },
+                "picture": {
+                  "type": "string",
+                  "description": "The url for the image."
+                },
+                "time_zone": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "org_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "manager": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "description": "Returns false if user does not have a manager."
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "first_name": {
+                            "type": "string"
+                          },
+                          "last_name": {
+                            "type": "string"
+                          },
+                          "picture": {
+                            "type": "string"
+                          },
+                          "external_id": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "description": "1: Direct Manager, 2: Dotted Manager",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  ]
+                },
+                "profile": {
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "goal": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "incrementedGoalIndex": {
+                          "type": "object",
+                          "properties": {
+                            "goal_id": {
+                              "type": "string"
+                            },
+                            "goal_name": {
+                              "type": "string"
+                            },
+                            "goal_narrative": {
+                              "type": "string"
+                            },
+                            "goal_type": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner": {
+                              "type": "string"
+                            },
+                            "goal_create_at": {
+                              "type": "string"
+                            },
+                            "goal_modified_at": {
+                              "type": "string"
+                            },
+                            "goal_created_by": {
+                              "type": "string"
+                            },
+                            "goal_updated_by": {
+                              "type": "string"
+                            },
+                            "goal_start_date": {
+                              "type": "string"
+                            },
+                            "goal_target_date": {
+                              "type": "string"
+                            },
+                            "goal_progress": {
+                              "type": "string"
+                            },
+                            "goal_progress_color": {
+                              "type": "string"
+                            },
+                            "goal_status": {
+                              "type": "string"
+                            },
+                            "goal_owner_full_name": {
+                              "type": "string"
+                            },
+                            "goal_team_id": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "goal_team_name": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "goal_permission": {
+                              "type": "string"
+                            },
+                            "goal_category": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects with the category identifier and name for the category.",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_metrics": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "metric_id": {
+                                    "type": "string"
+                                  },
+                                  "metric_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_real_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_name": {
+                                    "type": "string"
+                                  },
+                                  "metric_update_interval": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_update_interval_day": {
+                                    "type": "string"
+                                  },
+                                  "metric_unit": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_progress_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_counting_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_initial_data": {
+                                    "type": "string"
+                                  },
+                                  "metric_target": {
+                                    "type": "string"
+                                  },
+                                  "metric_achieve_target": {
+                                    "description": "What has been achieved against the `metric_target`.",
+                                    "type": "string"
+                                  },
+                                  "metric_create_at": {
+                                    "type": "string",
+                                    "description": "The GMT timestamp value for the created at time."
+                                  },
+                                  "metric_modified_at": {
+                                    "type": "string"
+                                  },
+                                  "metric_created_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_updated_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_progress": {
+                                    "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                                    "type": "string"
+                                  },
+                                  "metric_progress_color": {
+                                    "type": "string"
+                                  },
+                                  "metric_last_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_next_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_source_from": {
+                                    "description": "The source for metric data updates. Possible values are:<br/>\"1\" - An individual user<br/>\"2\" - Progress on a workstream<br/>\"3\" - Another WorkBoard metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - A multi-user survey<br/>\"6\" - Rolled up from other goals",
+                                    "type": "string"
+                                  },
+                                  "metric_source_from_id": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_comments": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "comment_id": {
+                                    "type": "string"
+                                  },
+                                  "comment_text": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner_name": {
+                                    "type": "string"
+                                  },
+                                  "comment_added_at": {
+                                    "type": "string"
+                                  },
+                                  "comment_last_updated": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_comments_count": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        },
+                        "goals_count": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    {
+                      "type": "array",
+                      "description": "Is an empty array, if there are no goals.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    }
+                  ],
+                  "additionalProperties": true
+                },
+                "goal_count": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get all of a user's goals.",
@@ -641,30 +1783,379 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "wb_email": {
+                  "type": "string"
+                },
+                "cell_num": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "create_at": {
+                  "type": "integer"
+                },
+                "last_visited_at": {
+                  "type": "string"
+                },
+                "picture": {
+                  "type": "string",
+                  "description": "The url for the image."
+                },
+                "time_zone": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "org_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "manager": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "description": "Returns false if user does not have a manager."
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "first_name": {
+                            "type": "string"
+                          },
+                          "last_name": {
+                            "type": "string"
+                          },
+                          "picture": {
+                            "type": "string"
+                          },
+                          "external_id": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "description": "1: Direct Manager, 2: Dotted Manager",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  ]
+                },
+                "profile": {
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "goal": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "goal_id": {
+                          "type": "string"
+                        },
+                        "goal_name": {
+                          "type": "string"
+                        },
+                        "goal_narrative": {
+                          "type": "string"
+                        },
+                        "goal_type": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        },
+                        "goal_owner": {
+                          "type": "string"
+                        },
+                        "goal_create_at": {
+                          "type": "string"
+                        },
+                        "goal_modified_at": {
+                          "type": "string"
+                        },
+                        "goal_created_by": {
+                          "type": "string"
+                        },
+                        "goal_updated_by": {
+                          "type": "string"
+                        },
+                        "goal_start_date": {
+                          "type": "string"
+                        },
+                        "goal_target_date": {
+                          "type": "string"
+                        },
+                        "goal_progress": {
+                          "type": "string"
+                        },
+                        "goal_progress_color": {
+                          "type": "string"
+                        },
+                        "goal_status": {
+                          "type": "string"
+                        },
+                        "goal_owner_full_name": {
+                          "type": "string"
+                        },
+                        "goal_team_id": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "goal_team_name": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "goal_permission": {
+                          "type": "string"
+                        },
+                        "goal_category": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "description": "An array of objects with the category identifier and name for the category.",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        },
+                        "goal_metrics": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "metric_id": {
+                                "type": "string"
+                              },
+                              "metric_owner": {
+                                "type": "string"
+                              },
+                              "metric_real_owner": {
+                                "type": "string"
+                              },
+                              "metric_name": {
+                                "type": "string"
+                              },
+                              "metric_update_interval": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              },
+                              "metric_update_interval_day": {
+                                "type": "string"
+                              },
+                              "metric_unit": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              },
+                              "metric_progress_type": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              },
+                              "metric_counting_type": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              },
+                              "metric_initial_data": {
+                                "type": "string"
+                              },
+                              "metric_target": {
+                                "type": "string"
+                              },
+                              "metric_achieve_target": {
+                                "description": "What has been achieved against the `metric_target`.",
+                                "type": "string"
+                              },
+                              "metric_create_at": {
+                                "type": "string",
+                                "description": "The GMT timestamp value for the created at time."
+                              },
+                              "metric_modified_at": {
+                                "type": "string"
+                              },
+                              "metric_created_by": {
+                                "type": "string"
+                              },
+                              "metric_updated_by": {
+                                "type": "string"
+                              },
+                              "metric_progress": {
+                                "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                                "type": "string"
+                              },
+                              "metric_progress_color": {
+                                "type": "string"
+                              },
+                              "metric_last_update": {
+                                "type": "string"
+                              },
+                              "metric_next_update": {
+                                "type": "string"
+                              },
+                              "metric_source_from": {
+                                "description": "The source for metric data updates. Possible values are:<br/>\"1\" - An individual user<br/>\"2\" - Progress on a workstream<br/>\"3\" - Another WorkBoard metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - A multi-user survey<br/>\"6\" - Rolled up from other goals",
+                                "type": "string"
+                              },
+                              "metric_source_from_id": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        },
+                        "goal_comments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "comment_id": {
+                                "type": "string"
+                              },
+                              "comment_text": {
+                                "type": "string"
+                              },
+                              "comment_owner": {
+                                "type": "string"
+                              },
+                              "comment_owner_name": {
+                                "type": "string"
+                              },
+                              "comment_added_at": {
+                                "type": "string"
+                              },
+                              "comment_last_updated": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        },
+                        "goal_comments_count": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    {
+                      "type": "array",
+                      "description": "Is an empty array, if there are no goals.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": []
+                    }
+                  ],
+                  "additionalProperties": true
+                },
+                "goal_count": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get a user's specific goal.",
@@ -741,30 +2232,173 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "team": {
+              "description": "Returns an array of teams if `team_id` is not passed. Returns a single object when `team_id` is passed.",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "team_id": {
+                      "type": "string"
+                    },
+                    "external_id": {
+                      "type": "string"
+                    },
+                    "parent_team_id": {
+                      "type": "string"
+                    },
+                    "dotted_team_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "The team identifiers for the dotted teams"
+                      }
+                    },
+                    "team_name": {
+                      "type": "string"
+                    },
+                    "team_owner": {
+                      "type": "string"
+                    },
+                    "team_type": {
+                      "type": "string",
+                      "description": "\"functional\" or \"working_group\""
+                    },
+                    "level": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "created_from": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    },
+                    "team_state": {
+                      "type": "string",
+                      "description": "\"1\" = active or \"0\" = archived"
+                    },
+                    "team_members": {
+                      "description": "Only returned on a request where a single team object is returned.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "first_name": {
+                            "type": "string"
+                          },
+                          "last_name": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "team_role": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "team_id": {
+                        "type": "string"
+                      },
+                      "external_id": {
+                        "type": "string"
+                      },
+                      "parent_team_id": {
+                        "type": "string"
+                      },
+                      "dotted_team_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "description": "The team identifiers for the dotted teams"
+                        }
+                      },
+                      "team_name": {
+                        "type": "string"
+                      },
+                      "team_owner": {
+                        "type": "string"
+                      },
+                      "team_type": {
+                        "type": "string",
+                        "description": "\"functional\" or \"working_group\""
+                      },
+                      "level": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "created_from": {
+                        "type": "string"
+                      },
+                      "created_at": {
+                        "type": "string"
+                      },
+                      "updated_at": {
+                        "type": "string"
+                      },
+                      "team_state": {
+                        "type": "string",
+                        "description": "\"1\" = active or \"0\" = archived"
+                      },
+                      "team_role": {
+                        "description": "Return when the `role` parameter is used.",
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "team_role_name": {
+                        "description": "Return when the `role` parameter is used.",
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "is_team_owner": {
+                        "description": "Return when the `role` parameter is used.",
+                        "type": "string",
+                        "nullable": true
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get a team or teams that the user token is a member of. If the token is a Data-Admin token, get all teams or a single team.",
@@ -866,30 +2500,102 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "team": {
+              "type": "object",
+              "properties": {
+                "team_id": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "parent_team_id": {
+                  "type": "string"
+                },
+                "dotted_team_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "The team identifiers for the dotted teams"
+                  }
+                },
+                "team_name": {
+                  "type": "string"
+                },
+                "team_owner": {
+                  "type": "string"
+                },
+                "team_type": {
+                  "type": "string",
+                  "description": "\"functional\" or \"working_group\""
+                },
+                "level": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "team_state": {
+                  "type": "string",
+                  "description": "\"1\" = active or \"0\" = archived"
+                },
+                "team_members": {
+                  "description": "Only returned on a request where a single team object is returned.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "team_role": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "description": "Returns an array of teams if `team_id` is not passed. Returns a single object when `team_id` is passed.",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create a new functional team or working group, and add Workstreams and team members.",
@@ -936,29 +2642,7 @@ export const workboardOperations = [
     "outputSchema": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
-      "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+      "properties": {}
     },
     "annotations": {
       "title": "Delete a team.",
@@ -1004,30 +2688,102 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "team": {
+              "type": "object",
+              "properties": {
+                "team_id": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "parent_team_id": {
+                  "type": "string"
+                },
+                "dotted_team_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "The team identifiers for the dotted teams"
+                  }
+                },
+                "team_name": {
+                  "type": "string"
+                },
+                "team_owner": {
+                  "type": "string"
+                },
+                "team_type": {
+                  "type": "string",
+                  "description": "\"functional\" or \"working_group\""
+                },
+                "level": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "team_state": {
+                  "type": "string",
+                  "description": "\"1\" = active or \"0\" = archived"
+                },
+                "team_members": {
+                  "description": "Only returned on a request where a single team object is returned.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "team_role": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "description": "Returns an array of teams if `team_id` is not passed. Returns a single object when `team_id` is passed.",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get a team that the user token is a member of. If the token is a Data-Admin token, get a single team that user is not a part of.",
@@ -1137,30 +2893,102 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "team": {
+              "type": "object",
+              "properties": {
+                "team_id": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "parent_team_id": {
+                  "type": "string"
+                },
+                "dotted_team_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "The team identifiers for the dotted teams"
+                  }
+                },
+                "team_name": {
+                  "type": "string"
+                },
+                "team_owner": {
+                  "type": "string"
+                },
+                "team_type": {
+                  "type": "string",
+                  "description": "\"functional\" or \"working_group\""
+                },
+                "level": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "team_state": {
+                  "type": "string",
+                  "description": "\"1\" = active or \"0\" = archived"
+                },
+                "team_members": {
+                  "description": "Only returned on a request where a single team object is returned.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "team_role": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "description": "Returns an array of teams if `team_id` is not passed. Returns a single object when `team_id` is passed.",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update a team.",
@@ -1206,30 +3034,186 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "team": {
+              "description": "",
+              "type": "object",
+              "properties": {
+                "team_id": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "parent_team_id": {
+                  "type": "string"
+                },
+                "dotted_team_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "The team identifiers for the dotted teams"
+                  }
+                },
+                "team_name": {
+                  "type": "string"
+                },
+                "team_owner": {
+                  "type": "string"
+                },
+                "team_type": {
+                  "type": "string",
+                  "description": "\"functional\" or \"working_group\""
+                },
+                "level": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "team_state": {
+                  "type": "string",
+                  "description": "\"1\" = active or \"0\" = archived"
+                },
+                "team_workstream": {
+                  "type": "object",
+                  "properties": {
+                    "workstream_count": {
+                      "type": "string"
+                    },
+                    "workstream": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ws_id": {
+                            "type": "string"
+                          },
+                          "ws_name": {
+                            "type": "string"
+                          },
+                          "ws_objective": {
+                            "type": "string"
+                          },
+                          "ws_owner": {
+                            "type": "string"
+                          },
+                          "ws_lead": {
+                            "type": "string"
+                          },
+                          "ws_status": {
+                            "type": "string"
+                          },
+                          "ws_type": {
+                            "type": "string"
+                          },
+                          "ws_effort": {
+                            "type": "object",
+                            "properties": {
+                              "low_effort": {
+                                "type": "string"
+                              },
+                              "medium_effort": {
+                                "type": "string"
+                              },
+                              "large_effort": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "ws_pace": {
+                            "type": "string"
+                          },
+                          "ws_health": {
+                            "type": "string"
+                          },
+                          "ws_priority": {
+                            "type": "string"
+                          },
+                          "ws_progress": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "ws_start_date": {
+                            "type": "string"
+                          },
+                          "ws_target_date": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "ws_completion_date": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "ws_team_id": {
+                            "type": "string"
+                          },
+                          "ws_team_name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "team_members": {
+                  "description": "Only returned on a request where a single team object is returned.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "team_role": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get all Workstreams belonging to the specified team.",
@@ -1275,30 +3259,247 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "team": {
+              "description": "",
+              "type": "object",
+              "properties": {
+                "team_id": {
+                  "type": "string"
+                },
+                "external_id": {
+                  "type": "string"
+                },
+                "parent_team_id": {
+                  "type": "string"
+                },
+                "dotted_team_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "The team identifiers for the dotted teams"
+                  }
+                },
+                "team_name": {
+                  "type": "string"
+                },
+                "team_owner": {
+                  "type": "string"
+                },
+                "team_type": {
+                  "type": "string"
+                },
+                "level": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "created_from": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "team_state": {
+                  "type": "string"
+                },
+                "team_activity": {
+                  "type": "object",
+                  "properties": {
+                    "activity_count": {
+                      "type": "string"
+                    },
+                    "activity": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ai_id": {
+                            "type": "string"
+                          },
+                          "ai_description": {
+                            "type": "string"
+                          },
+                          "ai_created_at": {
+                            "type": "string"
+                          },
+                          "ai_state": {
+                            "type": "string"
+                          },
+                          "ai_rating": {
+                            "type": "string"
+                          },
+                          "ai_priority": {
+                            "type": "string"
+                          },
+                          "ai_effort": {
+                            "type": "string"
+                          },
+                          "ai_files": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "file_id": {
+                                  "type": "string"
+                                },
+                                "file_name": {
+                                  "type": "string"
+                                },
+                                "file_url": {
+                                  "type": "string"
+                                },
+                                "file_owner": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          },
+                          "ai_sub_actions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "sub_ai_id": {
+                                  "type": "string"
+                                },
+                                "sub_ai_description": {
+                                  "type": "string"
+                                },
+                                "sub_ai_owner": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          },
+                          "ai_comments": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "comment_id": {
+                                  "type": "string"
+                                },
+                                "comment": {
+                                  "type": "string"
+                                },
+                                "comment_owner": {
+                                  "type": "string"
+                                },
+                                "comment_timestamp": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          },
+                          "ai_due_date": {
+                            "type": "string"
+                          },
+                          "ai_workstream": {
+                            "type": "string"
+                          },
+                          "ai_team": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "ai_workstream_name": {
+                            "type": "string"
+                          },
+                          "ai_loop_members": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "user_id": {
+                                  "type": "string"
+                                },
+                                "user_email": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          },
+                          "ai_tags": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "ai_due_before": {
+                            "type": "string"
+                          },
+                          "ai_owner": {
+                            "type": "string"
+                          },
+                          "ai_created_by": {
+                            "type": "string"
+                          },
+                          "ai_url": {
+                            "type": "string"
+                          },
+                          "ai_completed_at": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "team_members": {
+                  "description": "Only returned on a request where a single team object is returned.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "first_name": {
+                        "type": "string"
+                      },
+                      "last_name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "team_role": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "List details of all action items belonging to the specified team.",
@@ -1375,30 +3576,992 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "goal": {
+              "description": "Returns one of the responses below depending upon the parameters: `goal_id`, no ID or `team_id`.",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "description": "A single goal object.",
+                  "properties": {
+                    "goal_id": {
+                      "type": "string"
+                    },
+                    "goal_name": {
+                      "type": "string"
+                    },
+                    "goal_narrative": {
+                      "type": "string"
+                    },
+                    "goal_type": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "goal_owner": {
+                      "type": "string"
+                    },
+                    "goal_create_at": {
+                      "type": "string"
+                    },
+                    "goal_modified_at": {
+                      "type": "string"
+                    },
+                    "goal_created_by": {
+                      "type": "string"
+                    },
+                    "goal_updated_by": {
+                      "type": "string"
+                    },
+                    "goal_start_date": {
+                      "type": "string"
+                    },
+                    "goal_target_date": {
+                      "type": "string"
+                    },
+                    "goal_progress": {
+                      "type": "string"
+                    },
+                    "goal_progress_color": {
+                      "type": "string"
+                    },
+                    "goal_status": {
+                      "description": "The status of the goal. Possible values are 1 = active and 2 = closed.",
+                      "type": "string"
+                    },
+                    "goal_permission": {
+                      "type": "string"
+                    },
+                    "goal_category": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "An array of objects with the category identifier and name for the category.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "goal_workstreams": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "custom_attributes": {
+                      "nullable": true,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "An array of objects for each custom attribute value.",
+                        "properties": {
+                          "id": {
+                            "description": "The unique identifier for the custom attribute.",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "The name of the custom attribute.",
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "The value of the custom attribute.",
+                            "type": "string"
+                          },
+                          "status": {
+                            "description": "The status of the custom attribute: ",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "goal_custom_permission": {
+                      "description": "Returned when `include=custom_permission` is included.",
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "goal_permission_team_ids": {
+                          "description": "Comma separated string of the team identifiers that have permission to view the goal.",
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "goal_owner_full_name": {
+                      "type": "string"
+                    },
+                    "goal_team_id": {
+                      "type": "string"
+                    },
+                    "goal_team_name": {
+                      "type": "string"
+                    },
+                    "goal_metrics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "metric_id": {
+                            "type": "string"
+                          },
+                          "metric_owner": {
+                            "type": "string"
+                          },
+                          "metric_real_owner": {
+                            "type": "string"
+                          },
+                          "metric_name": {
+                            "type": "string"
+                          },
+                          "metric_update_interval": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "metric_update_interval_day": {
+                            "type": "string"
+                          },
+                          "metric_unit": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "metric_progress_type": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "metric_counting_type": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "metric_initial_data": {
+                            "type": "string"
+                          },
+                          "metric_target": {
+                            "type": "string"
+                          },
+                          "metric_achieve_target": {
+                            "description": "What has been achieved against the `metric_target`.",
+                            "type": "string"
+                          },
+                          "metric_create_at": {
+                            "type": "string",
+                            "description": "The GMT timestamp value for the created at time."
+                          },
+                          "metric_modified_at": {
+                            "type": "string"
+                          },
+                          "metric_created_by": {
+                            "type": "string"
+                          },
+                          "metric_updated_by": {
+                            "type": "string"
+                          },
+                          "metric_progress": {
+                            "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                            "type": "string"
+                          },
+                          "metric_progress_color": {
+                            "type": "string"
+                          },
+                          "metric_last_update": {
+                            "type": "string"
+                          },
+                          "metric_next_update": {
+                            "type": "string"
+                          },
+                          "metric_source_from": {
+                            "description": "The textual source for the Metric update. In the case of a mirrored Metric, this will be the user responsible for the update and the source Metric name.",
+                            "type": "string"
+                          },
+                          "metric_source_from_id": {
+                            "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                            "type": "string"
+                          },
+                          "last_metric_comment": {
+                            "description": "Only returned when querying for an individual goal.",
+                            "type": "object",
+                            "properties": {
+                              "comment": {
+                                "type": "string"
+                              },
+                              "comment_last_updated": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "goal_metrics_count": {
+                      "type": "string"
+                    },
+                    "goal_comments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "string"
+                          },
+                          "comment_text": {
+                            "type": "string"
+                          },
+                          "comment_owner": {
+                            "type": "string"
+                          },
+                          "comment_owner_name": {
+                            "type": "string"
+                          },
+                          "comment_added_at": {
+                            "type": "string"
+                          },
+                          "comment_last_updated": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "goal_comments_count": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Returns if no `goal_id` or `team_id` is included in the parameters.",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "user_email": {
+                        "type": "string"
+                      },
+                      "user_first_name": {
+                        "type": "string"
+                      },
+                      "user_last_name": {
+                        "type": "string"
+                      },
+                      "people_goals": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "description": "A single goal object.",
+                          "properties": {
+                            "goal_id": {
+                              "type": "string"
+                            },
+                            "goal_name": {
+                              "type": "string"
+                            },
+                            "goal_narrative": {
+                              "type": "string"
+                            },
+                            "goal_type": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner": {
+                              "type": "string"
+                            },
+                            "goal_create_at": {
+                              "type": "string"
+                            },
+                            "goal_modified_at": {
+                              "type": "string"
+                            },
+                            "goal_created_by": {
+                              "type": "string"
+                            },
+                            "goal_updated_by": {
+                              "type": "string"
+                            },
+                            "goal_start_date": {
+                              "type": "string"
+                            },
+                            "goal_target_date": {
+                              "type": "string"
+                            },
+                            "goal_progress": {
+                              "type": "string"
+                            },
+                            "goal_progress_color": {
+                              "type": "string"
+                            },
+                            "goal_status": {
+                              "description": "The status of the goal. Possible values are 1 = active and 2 = closed.",
+                              "type": "string"
+                            },
+                            "goal_permission": {
+                              "type": "string"
+                            },
+                            "goal_category": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects with the category identifier and name for the category.",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_workstreams": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "custom_attributes": {
+                              "nullable": true,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects for each custom attribute value.",
+                                "properties": {
+                                  "id": {
+                                    "description": "The unique identifier for the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "description": "The name of the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "value": {
+                                    "description": "The value of the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "status": {
+                                    "description": "The status of the custom attribute: ",
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_custom_permission": {
+                              "description": "Returned when `include=custom_permission` is included.",
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "goal_permission_team_ids": {
+                                  "description": "Comma separated string of the team identifiers that have permission to view the goal.",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner_full_name": {
+                              "type": "string"
+                            },
+                            "goal_team_id": {
+                              "type": "string"
+                            },
+                            "goal_team_name": {
+                              "type": "string"
+                            },
+                            "goal_metrics": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "metric_id": {
+                                    "type": "string"
+                                  },
+                                  "metric_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_real_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_name": {
+                                    "type": "string"
+                                  },
+                                  "metric_update_interval": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_update_interval_day": {
+                                    "type": "string"
+                                  },
+                                  "metric_unit": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_progress_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_counting_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_initial_data": {
+                                    "type": "string"
+                                  },
+                                  "metric_target": {
+                                    "type": "string"
+                                  },
+                                  "metric_achieve_target": {
+                                    "description": "What has been achieved against the `metric_target`.",
+                                    "type": "string"
+                                  },
+                                  "metric_create_at": {
+                                    "type": "string",
+                                    "description": "The GMT timestamp value for the created at time."
+                                  },
+                                  "metric_modified_at": {
+                                    "type": "string"
+                                  },
+                                  "metric_created_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_updated_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_progress": {
+                                    "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                                    "type": "string"
+                                  },
+                                  "metric_progress_color": {
+                                    "type": "string"
+                                  },
+                                  "metric_last_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_next_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_source_from": {
+                                    "description": "The textual source for the Metric update. In the case of a mirrored Metric, this will be the user responsible for the update and the source Metric name.",
+                                    "type": "string"
+                                  },
+                                  "metric_source_from_id": {
+                                    "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                                    "type": "string"
+                                  },
+                                  "last_metric_comment": {
+                                    "description": "Only returned when querying for an individual goal.",
+                                    "type": "object",
+                                    "properties": {
+                                      "comment": {
+                                        "type": "string"
+                                      },
+                                      "comment_last_updated": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_metrics_count": {
+                              "type": "string"
+                            },
+                            "goal_comments": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "comment_id": {
+                                    "type": "string"
+                                  },
+                                  "comment_text": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner_name": {
+                                    "type": "string"
+                                  },
+                                  "comment_added_at": {
+                                    "type": "string"
+                                  },
+                                  "comment_last_updated": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_comments_count": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                {
+                  "type": "array",
+                  "description": "Returned when `team_id` parameter is passed.",
+                  "items": {
+                    "type": "object",
+                    "description": "Returns if `team_id` is included in the parameters.",
+                    "properties": {
+                      "team_id": {
+                        "type": "integer"
+                      },
+                      "team_name": {
+                        "type": "string"
+                      },
+                      "team_owner_id": {
+                        "type": "string"
+                      },
+                      "team_owner_email": {
+                        "type": "string"
+                      },
+                      "team_goals": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "description": "A single goal object.",
+                          "properties": {
+                            "goal_id": {
+                              "type": "string"
+                            },
+                            "goal_name": {
+                              "type": "string"
+                            },
+                            "goal_narrative": {
+                              "type": "string"
+                            },
+                            "goal_type": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner": {
+                              "type": "string"
+                            },
+                            "goal_create_at": {
+                              "type": "string"
+                            },
+                            "goal_modified_at": {
+                              "type": "string"
+                            },
+                            "goal_created_by": {
+                              "type": "string"
+                            },
+                            "goal_updated_by": {
+                              "type": "string"
+                            },
+                            "goal_start_date": {
+                              "type": "string"
+                            },
+                            "goal_target_date": {
+                              "type": "string"
+                            },
+                            "goal_progress": {
+                              "type": "string"
+                            },
+                            "goal_progress_color": {
+                              "type": "string"
+                            },
+                            "goal_status": {
+                              "description": "The status of the goal. Possible values are 1 = active and 2 = closed.",
+                              "type": "string"
+                            },
+                            "goal_permission": {
+                              "type": "string"
+                            },
+                            "goal_category": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects with the category identifier and name for the category.",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_workstreams": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "custom_attributes": {
+                              "nullable": true,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects for each custom attribute value.",
+                                "properties": {
+                                  "id": {
+                                    "description": "The unique identifier for the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "description": "The name of the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "value": {
+                                    "description": "The value of the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "status": {
+                                    "description": "The status of the custom attribute: ",
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_custom_permission": {
+                              "description": "Returned when `include=custom_permission` is included.",
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "goal_permission_team_ids": {
+                                  "description": "Comma separated string of the team identifiers that have permission to view the goal.",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner_full_name": {
+                              "type": "string"
+                            },
+                            "goal_team_id": {
+                              "type": "string"
+                            },
+                            "goal_team_name": {
+                              "type": "string"
+                            },
+                            "goal_metrics": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "metric_id": {
+                                    "type": "string"
+                                  },
+                                  "metric_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_real_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_name": {
+                                    "type": "string"
+                                  },
+                                  "metric_update_interval": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_update_interval_day": {
+                                    "type": "string"
+                                  },
+                                  "metric_unit": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_progress_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_counting_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_initial_data": {
+                                    "type": "string"
+                                  },
+                                  "metric_target": {
+                                    "type": "string"
+                                  },
+                                  "metric_achieve_target": {
+                                    "description": "What has been achieved against the `metric_target`.",
+                                    "type": "string"
+                                  },
+                                  "metric_create_at": {
+                                    "type": "string",
+                                    "description": "The GMT timestamp value for the created at time."
+                                  },
+                                  "metric_modified_at": {
+                                    "type": "string"
+                                  },
+                                  "metric_created_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_updated_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_progress": {
+                                    "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                                    "type": "string"
+                                  },
+                                  "metric_progress_color": {
+                                    "type": "string"
+                                  },
+                                  "metric_last_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_next_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_source_from": {
+                                    "description": "The textual source for the Metric update. In the case of a mirrored Metric, this will be the user responsible for the update and the source Metric name.",
+                                    "type": "string"
+                                  },
+                                  "metric_source_from_id": {
+                                    "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                                    "type": "string"
+                                  },
+                                  "last_metric_comment": {
+                                    "description": "Only returned when querying for an individual goal.",
+                                    "type": "object",
+                                    "properties": {
+                                      "comment": {
+                                        "type": "string"
+                                      },
+                                      "comment_last_updated": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_metrics_count": {
+                              "type": "string"
+                            },
+                            "goal_comments": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "comment_id": {
+                                    "type": "string"
+                                  },
+                                  "comment_text": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner_name": {
+                                    "type": "string"
+                                  },
+                                  "comment_added_at": {
+                                    "type": "string"
+                                  },
+                                  "comment_last_updated": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_comments_count": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get Goals using parameters to filter results.",
@@ -1548,30 +4711,128 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "goal": {
+              "description": "Returns the array of goals.",
+              "type": "object",
+              "properties": {
+                "goals": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "goal_id": {
+                        "type": "string"
+                      },
+                      "goal_name": {
+                        "type": "string"
+                      },
+                      "goal_narrative": {
+                        "type": "string"
+                      },
+                      "goal_type": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "description": "Individual or Team",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "goal_owner": {
+                        "description": "The `user_id` for the owner of the goal.",
+                        "type": "string"
+                      },
+                      "goal_create_at": {
+                        "type": "string"
+                      },
+                      "goal_modified_at": {
+                        "type": "string"
+                      },
+                      "goal_created_by": {
+                        "type": "string"
+                      },
+                      "goal_start_date": {
+                        "type": "string"
+                      },
+                      "goal_target_date": {
+                        "type": "string"
+                      },
+                      "goal_progress": {
+                        "type": "string"
+                      },
+                      "goal_status": {
+                        "description": "1 (active) or 2 (closed)",
+                        "type": "string"
+                      },
+                      "goal_permission": {
+                        "type": "string"
+                      },
+                      "goal_category": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      },
+                      "goal_workstreams": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      },
+                      "goal_owner_full_name": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "error": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      },
+                      "for_row": {
+                        "type": "object",
+                        "description": "Return the failing object that was passed in the request.",
+                        "additionalProperties": true
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create a goal for a user in your organization, including metrics sourced from the same person. Make sure you have Data-Admin permission for your access token.",
@@ -1635,30 +4896,992 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "goal": {
+              "description": "Returns one of the responses below depending upon the parameters: `goal_id`, no ID or `team_id`.",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "description": "A single goal object.",
+                  "properties": {
+                    "goal_id": {
+                      "type": "string"
+                    },
+                    "goal_name": {
+                      "type": "string"
+                    },
+                    "goal_narrative": {
+                      "type": "string"
+                    },
+                    "goal_type": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "goal_owner": {
+                      "type": "string"
+                    },
+                    "goal_create_at": {
+                      "type": "string"
+                    },
+                    "goal_modified_at": {
+                      "type": "string"
+                    },
+                    "goal_created_by": {
+                      "type": "string"
+                    },
+                    "goal_updated_by": {
+                      "type": "string"
+                    },
+                    "goal_start_date": {
+                      "type": "string"
+                    },
+                    "goal_target_date": {
+                      "type": "string"
+                    },
+                    "goal_progress": {
+                      "type": "string"
+                    },
+                    "goal_progress_color": {
+                      "type": "string"
+                    },
+                    "goal_status": {
+                      "description": "The status of the goal. Possible values are 1 = active and 2 = closed.",
+                      "type": "string"
+                    },
+                    "goal_permission": {
+                      "type": "string"
+                    },
+                    "goal_category": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "An array of objects with the category identifier and name for the category.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "goal_workstreams": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "custom_attributes": {
+                      "nullable": true,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "An array of objects for each custom attribute value.",
+                        "properties": {
+                          "id": {
+                            "description": "The unique identifier for the custom attribute.",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "The name of the custom attribute.",
+                            "type": "string"
+                          },
+                          "value": {
+                            "description": "The value of the custom attribute.",
+                            "type": "string"
+                          },
+                          "status": {
+                            "description": "The status of the custom attribute: ",
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "goal_custom_permission": {
+                      "description": "Returned when `include=custom_permission` is included.",
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "goal_permission_team_ids": {
+                          "description": "Comma separated string of the team identifiers that have permission to view the goal.",
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "goal_owner_full_name": {
+                      "type": "string"
+                    },
+                    "goal_team_id": {
+                      "type": "string"
+                    },
+                    "goal_team_name": {
+                      "type": "string"
+                    },
+                    "goal_metrics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "metric_id": {
+                            "type": "string"
+                          },
+                          "metric_owner": {
+                            "type": "string"
+                          },
+                          "metric_real_owner": {
+                            "type": "string"
+                          },
+                          "metric_name": {
+                            "type": "string"
+                          },
+                          "metric_update_interval": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "metric_update_interval_day": {
+                            "type": "string"
+                          },
+                          "metric_unit": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "metric_progress_type": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "metric_counting_type": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          "metric_initial_data": {
+                            "type": "string"
+                          },
+                          "metric_target": {
+                            "type": "string"
+                          },
+                          "metric_achieve_target": {
+                            "description": "What has been achieved against the `metric_target`.",
+                            "type": "string"
+                          },
+                          "metric_create_at": {
+                            "type": "string",
+                            "description": "The GMT timestamp value for the created at time."
+                          },
+                          "metric_modified_at": {
+                            "type": "string"
+                          },
+                          "metric_created_by": {
+                            "type": "string"
+                          },
+                          "metric_updated_by": {
+                            "type": "string"
+                          },
+                          "metric_progress": {
+                            "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                            "type": "string"
+                          },
+                          "metric_progress_color": {
+                            "type": "string"
+                          },
+                          "metric_last_update": {
+                            "type": "string"
+                          },
+                          "metric_next_update": {
+                            "type": "string"
+                          },
+                          "metric_source_from": {
+                            "description": "The textual source for the Metric update. In the case of a mirrored Metric, this will be the user responsible for the update and the source Metric name.",
+                            "type": "string"
+                          },
+                          "metric_source_from_id": {
+                            "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                            "type": "string"
+                          },
+                          "last_metric_comment": {
+                            "description": "Only returned when querying for an individual goal.",
+                            "type": "object",
+                            "properties": {
+                              "comment": {
+                                "type": "string"
+                              },
+                              "comment_last_updated": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "goal_metrics_count": {
+                      "type": "string"
+                    },
+                    "goal_comments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "string"
+                          },
+                          "comment_text": {
+                            "type": "string"
+                          },
+                          "comment_owner": {
+                            "type": "string"
+                          },
+                          "comment_owner_name": {
+                            "type": "string"
+                          },
+                          "comment_added_at": {
+                            "type": "string"
+                          },
+                          "comment_last_updated": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "goal_comments_count": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Returns if no `goal_id` or `team_id` is included in the parameters.",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "user_email": {
+                        "type": "string"
+                      },
+                      "user_first_name": {
+                        "type": "string"
+                      },
+                      "user_last_name": {
+                        "type": "string"
+                      },
+                      "people_goals": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "description": "A single goal object.",
+                          "properties": {
+                            "goal_id": {
+                              "type": "string"
+                            },
+                            "goal_name": {
+                              "type": "string"
+                            },
+                            "goal_narrative": {
+                              "type": "string"
+                            },
+                            "goal_type": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner": {
+                              "type": "string"
+                            },
+                            "goal_create_at": {
+                              "type": "string"
+                            },
+                            "goal_modified_at": {
+                              "type": "string"
+                            },
+                            "goal_created_by": {
+                              "type": "string"
+                            },
+                            "goal_updated_by": {
+                              "type": "string"
+                            },
+                            "goal_start_date": {
+                              "type": "string"
+                            },
+                            "goal_target_date": {
+                              "type": "string"
+                            },
+                            "goal_progress": {
+                              "type": "string"
+                            },
+                            "goal_progress_color": {
+                              "type": "string"
+                            },
+                            "goal_status": {
+                              "description": "The status of the goal. Possible values are 1 = active and 2 = closed.",
+                              "type": "string"
+                            },
+                            "goal_permission": {
+                              "type": "string"
+                            },
+                            "goal_category": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects with the category identifier and name for the category.",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_workstreams": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "custom_attributes": {
+                              "nullable": true,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects for each custom attribute value.",
+                                "properties": {
+                                  "id": {
+                                    "description": "The unique identifier for the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "description": "The name of the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "value": {
+                                    "description": "The value of the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "status": {
+                                    "description": "The status of the custom attribute: ",
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_custom_permission": {
+                              "description": "Returned when `include=custom_permission` is included.",
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "goal_permission_team_ids": {
+                                  "description": "Comma separated string of the team identifiers that have permission to view the goal.",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner_full_name": {
+                              "type": "string"
+                            },
+                            "goal_team_id": {
+                              "type": "string"
+                            },
+                            "goal_team_name": {
+                              "type": "string"
+                            },
+                            "goal_metrics": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "metric_id": {
+                                    "type": "string"
+                                  },
+                                  "metric_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_real_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_name": {
+                                    "type": "string"
+                                  },
+                                  "metric_update_interval": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_update_interval_day": {
+                                    "type": "string"
+                                  },
+                                  "metric_unit": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_progress_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_counting_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_initial_data": {
+                                    "type": "string"
+                                  },
+                                  "metric_target": {
+                                    "type": "string"
+                                  },
+                                  "metric_achieve_target": {
+                                    "description": "What has been achieved against the `metric_target`.",
+                                    "type": "string"
+                                  },
+                                  "metric_create_at": {
+                                    "type": "string",
+                                    "description": "The GMT timestamp value for the created at time."
+                                  },
+                                  "metric_modified_at": {
+                                    "type": "string"
+                                  },
+                                  "metric_created_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_updated_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_progress": {
+                                    "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                                    "type": "string"
+                                  },
+                                  "metric_progress_color": {
+                                    "type": "string"
+                                  },
+                                  "metric_last_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_next_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_source_from": {
+                                    "description": "The textual source for the Metric update. In the case of a mirrored Metric, this will be the user responsible for the update and the source Metric name.",
+                                    "type": "string"
+                                  },
+                                  "metric_source_from_id": {
+                                    "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                                    "type": "string"
+                                  },
+                                  "last_metric_comment": {
+                                    "description": "Only returned when querying for an individual goal.",
+                                    "type": "object",
+                                    "properties": {
+                                      "comment": {
+                                        "type": "string"
+                                      },
+                                      "comment_last_updated": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_metrics_count": {
+                              "type": "string"
+                            },
+                            "goal_comments": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "comment_id": {
+                                    "type": "string"
+                                  },
+                                  "comment_text": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner_name": {
+                                    "type": "string"
+                                  },
+                                  "comment_added_at": {
+                                    "type": "string"
+                                  },
+                                  "comment_last_updated": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_comments_count": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                {
+                  "type": "array",
+                  "description": "Returned when `team_id` parameter is passed.",
+                  "items": {
+                    "type": "object",
+                    "description": "Returns if `team_id` is included in the parameters.",
+                    "properties": {
+                      "team_id": {
+                        "type": "integer"
+                      },
+                      "team_name": {
+                        "type": "string"
+                      },
+                      "team_owner_id": {
+                        "type": "string"
+                      },
+                      "team_owner_email": {
+                        "type": "string"
+                      },
+                      "team_goals": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "description": "A single goal object.",
+                          "properties": {
+                            "goal_id": {
+                              "type": "string"
+                            },
+                            "goal_name": {
+                              "type": "string"
+                            },
+                            "goal_narrative": {
+                              "type": "string"
+                            },
+                            "goal_type": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner": {
+                              "type": "string"
+                            },
+                            "goal_create_at": {
+                              "type": "string"
+                            },
+                            "goal_modified_at": {
+                              "type": "string"
+                            },
+                            "goal_created_by": {
+                              "type": "string"
+                            },
+                            "goal_updated_by": {
+                              "type": "string"
+                            },
+                            "goal_start_date": {
+                              "type": "string"
+                            },
+                            "goal_target_date": {
+                              "type": "string"
+                            },
+                            "goal_progress": {
+                              "type": "string"
+                            },
+                            "goal_progress_color": {
+                              "type": "string"
+                            },
+                            "goal_status": {
+                              "description": "The status of the goal. Possible values are 1 = active and 2 = closed.",
+                              "type": "string"
+                            },
+                            "goal_permission": {
+                              "type": "string"
+                            },
+                            "goal_category": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects with the category identifier and name for the category.",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_workstreams": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "custom_attributes": {
+                              "nullable": true,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "An array of objects for each custom attribute value.",
+                                "properties": {
+                                  "id": {
+                                    "description": "The unique identifier for the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "description": "The name of the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "value": {
+                                    "description": "The value of the custom attribute.",
+                                    "type": "string"
+                                  },
+                                  "status": {
+                                    "description": "The status of the custom attribute: ",
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_custom_permission": {
+                              "description": "Returned when `include=custom_permission` is included.",
+                              "type": "object",
+                              "nullable": true,
+                              "properties": {
+                                "goal_permission_team_ids": {
+                                  "description": "Comma separated string of the team identifiers that have permission to view the goal.",
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            },
+                            "goal_owner_full_name": {
+                              "type": "string"
+                            },
+                            "goal_team_id": {
+                              "type": "string"
+                            },
+                            "goal_team_name": {
+                              "type": "string"
+                            },
+                            "goal_metrics": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "metric_id": {
+                                    "type": "string"
+                                  },
+                                  "metric_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_real_owner": {
+                                    "type": "string"
+                                  },
+                                  "metric_name": {
+                                    "type": "string"
+                                  },
+                                  "metric_update_interval": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_update_interval_day": {
+                                    "type": "string"
+                                  },
+                                  "metric_unit": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_progress_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_counting_type": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  },
+                                  "metric_initial_data": {
+                                    "type": "string"
+                                  },
+                                  "metric_target": {
+                                    "type": "string"
+                                  },
+                                  "metric_achieve_target": {
+                                    "description": "What has been achieved against the `metric_target`.",
+                                    "type": "string"
+                                  },
+                                  "metric_create_at": {
+                                    "type": "string",
+                                    "description": "The GMT timestamp value for the created at time."
+                                  },
+                                  "metric_modified_at": {
+                                    "type": "string"
+                                  },
+                                  "metric_created_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_updated_by": {
+                                    "type": "string"
+                                  },
+                                  "metric_progress": {
+                                    "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                                    "type": "string"
+                                  },
+                                  "metric_progress_color": {
+                                    "type": "string"
+                                  },
+                                  "metric_last_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_next_update": {
+                                    "type": "string"
+                                  },
+                                  "metric_source_from": {
+                                    "description": "The textual source for the Metric update. In the case of a mirrored Metric, this will be the user responsible for the update and the source Metric name.",
+                                    "type": "string"
+                                  },
+                                  "metric_source_from_id": {
+                                    "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                                    "type": "string"
+                                  },
+                                  "last_metric_comment": {
+                                    "description": "Only returned when querying for an individual goal.",
+                                    "type": "object",
+                                    "properties": {
+                                      "comment": {
+                                        "type": "string"
+                                      },
+                                      "comment_last_updated": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "additionalProperties": true
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_metrics_count": {
+                              "type": "string"
+                            },
+                            "goal_comments": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "comment_id": {
+                                    "type": "string"
+                                  },
+                                  "comment_text": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner": {
+                                    "type": "string"
+                                  },
+                                  "comment_owner_name": {
+                                    "type": "string"
+                                  },
+                                  "comment_added_at": {
+                                    "type": "string"
+                                  },
+                                  "comment_last_updated": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": true
+                              }
+                            },
+                            "goal_comments_count": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get Goals using parameters to filter results.",
@@ -1709,30 +5932,330 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "goal": {
+              "type": "object",
+              "description": "A single goal object.",
+              "properties": {
+                "goal_id": {
+                  "type": "string"
+                },
+                "goal_name": {
+                  "type": "string"
+                },
+                "goal_narrative": {
+                  "type": "string"
+                },
+                "goal_type": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "goal_owner": {
+                  "type": "string"
+                },
+                "goal_create_at": {
+                  "type": "string"
+                },
+                "goal_modified_at": {
+                  "type": "string"
+                },
+                "goal_created_by": {
+                  "type": "string"
+                },
+                "goal_updated_by": {
+                  "type": "string"
+                },
+                "goal_start_date": {
+                  "type": "string"
+                },
+                "goal_target_date": {
+                  "type": "string"
+                },
+                "goal_progress": {
+                  "type": "string"
+                },
+                "goal_progress_color": {
+                  "type": "string"
+                },
+                "goal_status": {
+                  "description": "The status of the goal. Possible values are 1 = active and 2 = closed.",
+                  "type": "string"
+                },
+                "goal_permission": {
+                  "type": "string"
+                },
+                "goal_category": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "An array of objects with the category identifier and name for the category.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "goal_workstreams": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "custom_attributes": {
+                  "nullable": true,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "An array of objects for each custom attribute value.",
+                    "properties": {
+                      "id": {
+                        "description": "The unique identifier for the custom attribute.",
+                        "type": "string"
+                      },
+                      "name": {
+                        "description": "The name of the custom attribute.",
+                        "type": "string"
+                      },
+                      "value": {
+                        "description": "The value of the custom attribute.",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description": "The status of the custom attribute: ",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "goal_custom_permission": {
+                  "description": "Returned when `include=custom_permission` is included.",
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "goal_permission_team_ids": {
+                      "description": "Comma separated string of the team identifiers that have permission to view the goal.",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "goal_owner_full_name": {
+                  "type": "string"
+                },
+                "goal_team_id": {
+                  "type": "string"
+                },
+                "goal_team_name": {
+                  "type": "string"
+                },
+                "goal_metrics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "metric_id": {
+                        "type": "string"
+                      },
+                      "metric_owner": {
+                        "type": "string"
+                      },
+                      "metric_real_owner": {
+                        "type": "string"
+                      },
+                      "metric_name": {
+                        "type": "string"
+                      },
+                      "metric_update_interval": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "metric_update_interval_day": {
+                        "type": "string"
+                      },
+                      "metric_unit": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "metric_progress_type": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "metric_counting_type": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "metric_initial_data": {
+                        "type": "string"
+                      },
+                      "metric_target": {
+                        "type": "string"
+                      },
+                      "metric_achieve_target": {
+                        "description": "What has been achieved against the `metric_target`.",
+                        "type": "string"
+                      },
+                      "metric_create_at": {
+                        "type": "string",
+                        "description": "The GMT timestamp value for the created at time."
+                      },
+                      "metric_modified_at": {
+                        "type": "string"
+                      },
+                      "metric_created_by": {
+                        "type": "string"
+                      },
+                      "metric_updated_by": {
+                        "type": "string"
+                      },
+                      "metric_progress": {
+                        "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                        "type": "string"
+                      },
+                      "metric_progress_color": {
+                        "type": "string"
+                      },
+                      "metric_last_update": {
+                        "type": "string"
+                      },
+                      "metric_next_update": {
+                        "type": "string"
+                      },
+                      "metric_source_from": {
+                        "description": "The textual source for the Metric update. In the case of a mirrored Metric, this will be the user responsible for the update and the source Metric name.",
+                        "type": "string"
+                      },
+                      "metric_source_from_id": {
+                        "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                        "type": "string"
+                      },
+                      "last_metric_comment": {
+                        "description": "Only returned when querying for an individual goal.",
+                        "type": "object",
+                        "properties": {
+                          "comment": {
+                            "type": "string"
+                          },
+                          "comment_last_updated": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "goal_metrics_count": {
+                  "type": "string"
+                },
+                "goal_comments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "comment_id": {
+                        "type": "string"
+                      },
+                      "comment_text": {
+                        "type": "string"
+                      },
+                      "comment_owner": {
+                        "type": "string"
+                      },
+                      "comment_owner_name": {
+                        "type": "string"
+                      },
+                      "comment_added_at": {
+                        "type": "string"
+                      },
+                      "comment_last_updated": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "goal_comments_count": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "List data for one metric (specified by the metricid parameter) associated with the goal specified by the goalid parameter.",
@@ -1778,30 +6301,198 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "strategies": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "narrative": {
+                    "type": "string"
+                  },
+                  "strategyType": {
+                    "type": "string"
+                  },
+                  "timeHorizon": {
+                    "type": "string"
+                  },
+                  "iterationCadence": {
+                    "type": "string"
+                  },
+                  "pillars": {
+                    "description": "An array of the pillars associated with the strategy",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "narrative": {
+                          "type": "string"
+                        },
+                        "objectives": {
+                          "type": "array",
+                          "items": {
+                            "description": "An array of the associated objective IDs",
+                            "type": "string"
+                          }
+                        },
+                        "outcomes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "narrative": {
+                                "type": "string"
+                              },
+                              "endDate": {
+                                "type": "string",
+                                "format": "date"
+                              },
+                              "startValue": {
+                                "type": "string"
+                              },
+                              "targetValue": {
+                                "type": "string"
+                              },
+                              "currentValue": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "unitOfMeasurement": {
+                                "type": "string"
+                              },
+                              "keyResults": {
+                                "type": "array",
+                                "items": {
+                                  "description": "An array of the associated Metric IDs",
+                                  "type": "string"
+                                }
+                              },
+                              "automatedCalcType": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        },
+                        "assumptions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "narrative": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "keyResults": {
+                                "type": "array",
+                                "items": {
+                                  "description": "An array of the associated Metric IDs",
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        },
+                        "investmentPlans": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "narrative": {
+                                "type": "string"
+                              },
+                              "startValue": {
+                                "type": "string"
+                              },
+                              "targetValue": {
+                                "type": "string"
+                              },
+                              "currentValue": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "keyResults": {
+                                "type": "array",
+                                "items": {
+                                  "description": "An array of the associated Metric IDs",
+                                  "type": "string"
+                                }
+                              },
+                              "unitOfMeasurement": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get a Goal's associated strategies and pillars from WorkBoard Strategy. Note, the logged in user must have Data-Admin permission and have access to WorkBoard Strategy in order to view the goal pillars.",
@@ -1847,30 +6538,118 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "alignment": {
+              "description": "Returns the goal object.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "goal_id": {
+                    "type": "string"
+                  },
+                  "goal_name": {
+                    "type": "string"
+                  },
+                  "goal_owner": {
+                    "type": "string"
+                  },
+                  "goal_team_name": {
+                    "type": "string"
+                  },
+                  "goal_target_date": {
+                    "type": "string"
+                  },
+                  "goal_progress": {
+                    "type": "string"
+                  },
+                  "goal_progress_color": {
+                    "type": "string"
+                  },
+                  "goal_alignments": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "goal_id": {
+                          "type": "string"
+                        },
+                        "goal_name": {
+                          "type": "string"
+                        },
+                        "goal_owner": {
+                          "type": "string"
+                        },
+                        "goal_team_name": {
+                          "type": "string"
+                        },
+                        "goal_target_date": {
+                          "type": "string"
+                        },
+                        "goal_progress": {
+                          "type": "string"
+                        },
+                        "goal_progress_color": {
+                          "type": "string"
+                        },
+                        "goal_alignments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "goal_id": {
+                                "type": "string"
+                              },
+                              "goal_name": {
+                                "type": "string"
+                              },
+                              "goal_owner": {
+                                "type": "string"
+                              },
+                              "goal_team_name": {
+                                "type": "string"
+                              },
+                              "goal_target_date": {
+                                "type": "string"
+                              },
+                              "goal_progress": {
+                                "type": "string"
+                              },
+                              "goal_progress_color": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "List aligned and dependent goals associated with the goal specified by the goalid parameter. Note, the logged in user must have Data-Admin permission in order to view the goal alignment.",
@@ -1932,30 +6711,881 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "metric": {
+              "description": "Returns an array of metrics if `metric_id` is not passed. Returns a single metric object when `metric_id` is passed.",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "metric_id": {
+                      "type": "string"
+                    },
+                    "metric_goal_id": {
+                      "type": "string"
+                    },
+                    "metric_owner": {
+                      "type": "string"
+                    },
+                    "metric_real_owner": {
+                      "type": "string"
+                    },
+                    "metric_name": {
+                      "type": "string"
+                    },
+                    "metric_update_interval": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "metric_update_interval_day": {
+                      "type": "string"
+                    },
+                    "metric_unit": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "metric_progress_type": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "metric_counting_type": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "metric_initial_data": {
+                      "type": "string"
+                    },
+                    "metric_target": {
+                      "type": "string"
+                    },
+                    "metric_progress": {
+                      "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                      "type": "string"
+                    },
+                    "metric_progress_color": {
+                      "type": "string"
+                    },
+                    "metric_last_update": {
+                      "type": "string"
+                    },
+                    "metric_next_update": {
+                      "type": "string"
+                    },
+                    "metric_source_from": {
+                      "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                      "type": "string"
+                    },
+                    "metric_create_at": {
+                      "type": "string",
+                      "description": "The GMT timestamp value for the created at time."
+                    },
+                    "metric_modified_at": {
+                      "type": "string"
+                    },
+                    "metric_created_by": {
+                      "type": "string"
+                    },
+                    "metric_updated_by": {
+                      "type": "string"
+                    },
+                    "metric_status": {
+                      "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                      "type": "string"
+                    },
+                    "metric_permission": {
+                      "type": "string"
+                    },
+                    "metric_confidence": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "confidence": {
+                            "type": "string"
+                          },
+                          "comment": {
+                            "type": "string"
+                          },
+                          "modified_at": {
+                            "type": "string"
+                          },
+                          "metric_data_id": {
+                            "type": "integer",
+                            "nullable": true,
+                            "description": "Only returned when querying (GET) for a single metric with the metric_id in the path. This value corresponds to an id in the metric_data array and links the confidence update to a specific metric data point. The metric_data array is only returned when include_metric_data=yes is part of the query string."
+                          }
+                        },
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "child_kr": {
+                      "description": "The children of the current metric (Key Result).",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "metric_id": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "metric": {
+                            "type": "string"
+                          },
+                          "target": {
+                            "type": "string"
+                          },
+                          "initial_data": {
+                            "type": "string"
+                          },
+                          "graph_type": {
+                            "type": "string"
+                          },
+                          "counting": {
+                            "type": "string"
+                          },
+                          "owner": {
+                            "type": "string"
+                          },
+                          "interval": {
+                            "type": "string"
+                          },
+                          "create_at": {
+                            "type": "string",
+                            "description": "The GMT timestamp value for the created at time."
+                          },
+                          "last_mod": {
+                            "type": "string",
+                            "description": "The GMT timestamp value for the modified at time."
+                          },
+                          "goal_id": {
+                            "type": "string"
+                          },
+                          "permission": {
+                            "type": "string"
+                          },
+                          "progress": {
+                            "type": "string"
+                          },
+                          "progress_color": {
+                            "type": "string"
+                          },
+                          "last_run": {
+                            "type": "string"
+                          },
+                          "next_run": {
+                            "type": "string"
+                          },
+                          "repeat_id": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                            "type": "string"
+                          },
+                          "status": {
+                            "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                            "type": "string"
+                          },
+                          "weekly_update_day": {
+                            "type": "string"
+                          },
+                          "progress_type": {
+                            "type": "string"
+                          },
+                          "measure_metric_data": {
+                            "type": "string"
+                          },
+                          "multiply_data": {
+                            "type": "string"
+                          },
+                          "lower_limit": {
+                            "type": "string"
+                          },
+                          "upper_limit": {
+                            "type": "string"
+                          },
+                          "progress_consider": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "goal_align_check": {
+                            "type": "string"
+                          },
+                          "goal_roll_up_check": {
+                            "type": "string"
+                          },
+                          "is_encrypted": {
+                            "type": "string"
+                          },
+                          "multiplier": {
+                            "type": "string"
+                          },
+                          "weightage": {
+                            "type": "string"
+                          },
+                          "stop_update": {
+                            "type": "string"
+                          },
+                          "achieve_target": {
+                            "type": "string"
+                          },
+                          "cascade_goal_id": {
+                            "type": "string"
+                          },
+                          "created_by": {
+                            "type": "string"
+                          },
+                          "modified_at": {
+                            "type": "string"
+                          },
+                          "start_date": {
+                            "description": "The start date of the metric.",
+                            "type": "string"
+                          },
+                          "end_date": {
+                            "description": "The end date of the metric.",
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "parent_goal_id": {
+                            "type": "string"
+                          },
+                          "real_owner": {
+                            "type": "string"
+                          },
+                          "parent": {
+                            "description": "The parent metric ID.",
+                            "type": "string"
+                          },
+                          "quarter_target_type": {
+                            "type": "string"
+                          },
+                          "quarter_name": {
+                            "type": "string"
+                          },
+                          "period_name": {
+                            "type": "object",
+                            "additionalProperties": true
+                          },
+                          "rag_score": {
+                            "type": "string"
+                          },
+                          "last_update": {
+                            "type": "string"
+                          },
+                          "created_from": {
+                            "type": "string"
+                          },
+                          "stretch_target": {
+                            "type": "string"
+                          },
+                          "fy_quarter_kr": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "metric_automation": {
+                      "description": "The automation information for a Metric is available for some of our integrations. `null` if no automation is available.",
+                      "type": "object",
+                      "nullable": true,
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "source_plugins": {
+                              "description": "* This object is subject to change and is intentionally not documented. This denotes that the Metric progress is sourced from a plugin.",
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                              }
+                            }
+                          },
+                          "additionalProperties": true
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "external_sources": {
+                              "description": "* This object is subject to change and is intentionally not documented. This denotes that the Metric progress is sourced from an external application.",
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "additionalProperties": true
+                              }
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      ],
+                      "additionalProperties": true
+                    },
+                    "metric_achieve_target": {
+                      "description": "What has been achieved against the `metric_target`.",
+                      "type": "string"
+                    },
+                    "metric_data": {
+                      "description": "Included if `include_metric_data=yes`.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "metric_data_id": {
+                            "description": "The ID for the specific metric update field in WorkBoard.",
+                            "type": "string"
+                          },
+                          "metric_data_value": {
+                            "description": "Will be `null` when there was not an update.",
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "metric_data_created_at": {
+                            "description": "The timestamp for when the metric should be updated based upon the update cadence.",
+                            "type": "string"
+                          },
+                          "metric_data_created_by": {
+                            "description": "The user ID for the user that updated the metric (Key Result).",
+                            "type": "string"
+                          },
+                          "metric_data_updated_at": {
+                            "description": "The timestamp for when the metric was actually updated by the user, application or integration. Will be `\"0\"` when there was not an update.",
+                            "type": "string"
+                          },
+                          "metric_data_comment": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "metric_comments": {
+                      "description": "Included if `include_metric_data=yes`",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "comment": {
+                            "type": "string"
+                          },
+                          "modified_at": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "metric_mit_start_date": {
+                      "description": "Returned when the `metric_id` or `metric_id_path` is part of the request and `metric_source_from` = 12 or 13 or 14 (MIT). The unix timestamp for the start of the multiple interval time period (MIT) metric. This is based upon the earliest `child_kr`'s `start_date`.",
+                      "type": "string"
+                    },
+                    "metric_mit_end_date": {
+                      "description": "Returned when the `metric_id` or `metric_id_path` is part of the request and `metric_source_from` = 12 or 13 or 14 (MIT). The unix timestamp for the end of the multiple interval time period (MIT) metric. This is based upon the latest `child_kr`'s `end_date`.",
+                      "type": "string"
+                    },
+                    "metric_goal_source": {
+                      "description": "An array of the active Goal IDs when the `metric_source_from` is 7 (source from other Goals). Available when requesting a single Metric and Metric ID is used in the path (`metric_id_path`).",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "metric_id": {
+                        "type": "string"
+                      },
+                      "metric_goal_id": {
+                        "type": "string"
+                      },
+                      "metric_owner": {
+                        "type": "string"
+                      },
+                      "metric_real_owner": {
+                        "type": "string"
+                      },
+                      "metric_name": {
+                        "type": "string"
+                      },
+                      "metric_update_interval": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "metric_update_interval_day": {
+                        "type": "string"
+                      },
+                      "metric_unit": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "metric_progress_type": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "metric_counting_type": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "metric_initial_data": {
+                        "type": "string"
+                      },
+                      "metric_target": {
+                        "type": "string"
+                      },
+                      "metric_progress": {
+                        "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                        "type": "string"
+                      },
+                      "metric_progress_color": {
+                        "type": "string"
+                      },
+                      "metric_last_update": {
+                        "type": "string"
+                      },
+                      "metric_next_update": {
+                        "type": "string"
+                      },
+                      "metric_source_from": {
+                        "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                        "type": "string"
+                      },
+                      "metric_create_at": {
+                        "type": "string",
+                        "description": "The GMT timestamp value for the created at time."
+                      },
+                      "metric_modified_at": {
+                        "type": "string"
+                      },
+                      "metric_created_by": {
+                        "type": "string"
+                      },
+                      "metric_updated_by": {
+                        "type": "string"
+                      },
+                      "metric_status": {
+                        "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                        "type": "string"
+                      },
+                      "metric_permission": {
+                        "type": "string"
+                      },
+                      "metric_confidence": {
+                        "type": "array",
+                        "items": {
+                          "properties": {
+                            "confidence": {
+                              "type": "string"
+                            },
+                            "comment": {
+                              "type": "string"
+                            },
+                            "modified_at": {
+                              "type": "string"
+                            },
+                            "metric_data_id": {
+                              "type": "integer",
+                              "nullable": true,
+                              "description": "Only returned when querying (GET) for a single metric with the metric_id in the path. This value corresponds to an id in the metric_data array and links the confidence update to a specific metric data point. The metric_data array is only returned when include_metric_data=yes is part of the query string."
+                            }
+                          },
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      },
+                      "child_kr": {
+                        "description": "The children of the current metric (Key Result).",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "metric_id": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "metric": {
+                              "type": "string"
+                            },
+                            "target": {
+                              "type": "string"
+                            },
+                            "initial_data": {
+                              "type": "string"
+                            },
+                            "graph_type": {
+                              "type": "string"
+                            },
+                            "counting": {
+                              "type": "string"
+                            },
+                            "owner": {
+                              "type": "string"
+                            },
+                            "interval": {
+                              "type": "string"
+                            },
+                            "create_at": {
+                              "type": "string",
+                              "description": "The GMT timestamp value for the created at time."
+                            },
+                            "last_mod": {
+                              "type": "string",
+                              "description": "The GMT timestamp value for the modified at time."
+                            },
+                            "goal_id": {
+                              "type": "string"
+                            },
+                            "permission": {
+                              "type": "string"
+                            },
+                            "progress": {
+                              "type": "string"
+                            },
+                            "progress_color": {
+                              "type": "string"
+                            },
+                            "last_run": {
+                              "type": "string"
+                            },
+                            "next_run": {
+                              "type": "string"
+                            },
+                            "repeat_id": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                              "type": "string"
+                            },
+                            "status": {
+                              "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                              "type": "string"
+                            },
+                            "weekly_update_day": {
+                              "type": "string"
+                            },
+                            "progress_type": {
+                              "type": "string"
+                            },
+                            "measure_metric_data": {
+                              "type": "string"
+                            },
+                            "multiply_data": {
+                              "type": "string"
+                            },
+                            "lower_limit": {
+                              "type": "string"
+                            },
+                            "upper_limit": {
+                              "type": "string"
+                            },
+                            "progress_consider": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "goal_align_check": {
+                              "type": "string"
+                            },
+                            "goal_roll_up_check": {
+                              "type": "string"
+                            },
+                            "is_encrypted": {
+                              "type": "string"
+                            },
+                            "multiplier": {
+                              "type": "string"
+                            },
+                            "weightage": {
+                              "type": "string"
+                            },
+                            "stop_update": {
+                              "type": "string"
+                            },
+                            "achieve_target": {
+                              "type": "string"
+                            },
+                            "cascade_goal_id": {
+                              "type": "string"
+                            },
+                            "created_by": {
+                              "type": "string"
+                            },
+                            "modified_at": {
+                              "type": "string"
+                            },
+                            "start_date": {
+                              "description": "The start date of the metric.",
+                              "type": "string"
+                            },
+                            "end_date": {
+                              "description": "The end date of the metric.",
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "parent_goal_id": {
+                              "type": "string"
+                            },
+                            "real_owner": {
+                              "type": "string"
+                            },
+                            "parent": {
+                              "description": "The parent metric ID.",
+                              "type": "string"
+                            },
+                            "quarter_target_type": {
+                              "type": "string"
+                            },
+                            "quarter_name": {
+                              "type": "string"
+                            },
+                            "period_name": {
+                              "type": "object",
+                              "additionalProperties": true
+                            },
+                            "rag_score": {
+                              "type": "string"
+                            },
+                            "last_update": {
+                              "type": "string"
+                            },
+                            "created_from": {
+                              "type": "string"
+                            },
+                            "stretch_target": {
+                              "type": "string"
+                            },
+                            "fy_quarter_kr": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      },
+                      "metric_automation": {
+                        "description": "The automation information for a Metric is available for some of our integrations. `null` if no automation is available.",
+                        "type": "object",
+                        "nullable": true,
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source_plugins": {
+                                "description": "* This object is subject to change and is intentionally not documented. This denotes that the Metric progress is sourced from a plugin.",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "additionalProperties": true
+                                }
+                              }
+                            },
+                            "additionalProperties": true
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "external_sources": {
+                                "description": "* This object is subject to change and is intentionally not documented. This denotes that the Metric progress is sourced from an external application.",
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "additionalProperties": true
+                                }
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        ],
+                        "additionalProperties": true
+                      },
+                      "metric_achieve_target": {
+                        "description": "What has been achieved against the `metric_target`.",
+                        "type": "string"
+                      },
+                      "metric_data": {
+                        "description": "Included if `include_metric_data=yes`.",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "metric_data_id": {
+                              "description": "The ID for the specific metric update field in WorkBoard.",
+                              "type": "string"
+                            },
+                            "metric_data_value": {
+                              "description": "Will be `null` when there was not an update.",
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "metric_data_created_at": {
+                              "description": "The timestamp for when the metric should be updated based upon the update cadence.",
+                              "type": "string"
+                            },
+                            "metric_data_created_by": {
+                              "description": "The user ID for the user that updated the metric (Key Result).",
+                              "type": "string"
+                            },
+                            "metric_data_updated_at": {
+                              "description": "The timestamp for when the metric was actually updated by the user, application or integration. Will be `\"0\"` when there was not an update.",
+                              "type": "string"
+                            },
+                            "metric_data_comment": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      },
+                      "metric_comments": {
+                        "description": "Included if `include_metric_data=yes`",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "comment": {
+                              "type": "string"
+                            },
+                            "modified_at": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      },
+                      "metric_mit_start_date": {
+                        "description": "Returned when the `metric_id` or `metric_id_path` is part of the request and `metric_source_from` = 12 or 13 or 14 (MIT). The unix timestamp for the start of the multiple interval time period (MIT) metric. This is based upon the earliest `child_kr`'s `start_date`.",
+                        "type": "string"
+                      },
+                      "metric_mit_end_date": {
+                        "description": "Returned when the `metric_id` or `metric_id_path` is part of the request and `metric_source_from` = 12 or 13 or 14 (MIT). The unix timestamp for the end of the multiple interval time period (MIT) metric. This is based upon the latest `child_kr`'s `end_date`.",
+                        "type": "string"
+                      },
+                      "metric_goal_source": {
+                        "description": "An array of the active Goal IDs when the `metric_source_from` is 7 (source from other Goals). Available when requesting a single Metric and Metric ID is used in the path (`metric_id_path`).",
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Request metrics (key results) the user (token owner) has access to. Use a Data-Admin token to gain access to metrics across your organization.",
@@ -2013,30 +7643,451 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "metric": {
+              "type": "object",
+              "properties": {
+                "metric_id": {
+                  "type": "string"
+                },
+                "metric_goal_id": {
+                  "type": "string"
+                },
+                "metric_owner": {
+                  "type": "string"
+                },
+                "metric_real_owner": {
+                  "type": "string"
+                },
+                "metric_name": {
+                  "type": "string"
+                },
+                "metric_update_interval": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_update_interval_day": {
+                  "type": "string"
+                },
+                "metric_unit": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_progress_type": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_counting_type": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_initial_data": {
+                  "type": "string"
+                },
+                "metric_target": {
+                  "type": "string"
+                },
+                "metric_progress": {
+                  "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                  "type": "string"
+                },
+                "metric_progress_color": {
+                  "type": "string"
+                },
+                "metric_last_update": {
+                  "type": "string"
+                },
+                "metric_next_update": {
+                  "type": "string"
+                },
+                "metric_source_from": {
+                  "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                  "type": "string"
+                },
+                "metric_create_at": {
+                  "type": "string",
+                  "description": "The GMT timestamp value for the created at time."
+                },
+                "metric_modified_at": {
+                  "type": "string"
+                },
+                "metric_created_by": {
+                  "type": "string"
+                },
+                "metric_updated_by": {
+                  "type": "string"
+                },
+                "metric_status": {
+                  "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                  "type": "string"
+                },
+                "metric_permission": {
+                  "type": "string"
+                },
+                "metric_confidence": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "confidence": {
+                        "type": "string"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "modified_at": {
+                        "type": "string"
+                      },
+                      "metric_data_id": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Only returned when querying (GET) for a single metric with the metric_id in the path. This value corresponds to an id in the metric_data array and links the confidence update to a specific metric data point. The metric_data array is only returned when include_metric_data=yes is part of the query string."
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "child_kr": {
+                  "description": "The children of the current metric (Key Result).",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "metric_id": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "metric": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "initial_data": {
+                        "type": "string"
+                      },
+                      "graph_type": {
+                        "type": "string"
+                      },
+                      "counting": {
+                        "type": "string"
+                      },
+                      "owner": {
+                        "type": "string"
+                      },
+                      "interval": {
+                        "type": "string"
+                      },
+                      "create_at": {
+                        "type": "string",
+                        "description": "The GMT timestamp value for the created at time."
+                      },
+                      "last_mod": {
+                        "type": "string",
+                        "description": "The GMT timestamp value for the modified at time."
+                      },
+                      "goal_id": {
+                        "type": "string"
+                      },
+                      "permission": {
+                        "type": "string"
+                      },
+                      "progress": {
+                        "type": "string"
+                      },
+                      "progress_color": {
+                        "type": "string"
+                      },
+                      "last_run": {
+                        "type": "string"
+                      },
+                      "next_run": {
+                        "type": "string"
+                      },
+                      "repeat_id": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                        "type": "string"
+                      },
+                      "weekly_update_day": {
+                        "type": "string"
+                      },
+                      "progress_type": {
+                        "type": "string"
+                      },
+                      "measure_metric_data": {
+                        "type": "string"
+                      },
+                      "multiply_data": {
+                        "type": "string"
+                      },
+                      "lower_limit": {
+                        "type": "string"
+                      },
+                      "upper_limit": {
+                        "type": "string"
+                      },
+                      "progress_consider": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "goal_align_check": {
+                        "type": "string"
+                      },
+                      "goal_roll_up_check": {
+                        "type": "string"
+                      },
+                      "is_encrypted": {
+                        "type": "string"
+                      },
+                      "multiplier": {
+                        "type": "string"
+                      },
+                      "weightage": {
+                        "type": "string"
+                      },
+                      "stop_update": {
+                        "type": "string"
+                      },
+                      "achieve_target": {
+                        "type": "string"
+                      },
+                      "cascade_goal_id": {
+                        "type": "string"
+                      },
+                      "created_by": {
+                        "type": "string"
+                      },
+                      "modified_at": {
+                        "type": "string"
+                      },
+                      "start_date": {
+                        "description": "The start date of the metric.",
+                        "type": "string"
+                      },
+                      "end_date": {
+                        "description": "The end date of the metric.",
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "parent_goal_id": {
+                        "type": "string"
+                      },
+                      "real_owner": {
+                        "type": "string"
+                      },
+                      "parent": {
+                        "description": "The parent metric ID.",
+                        "type": "string"
+                      },
+                      "quarter_target_type": {
+                        "type": "string"
+                      },
+                      "quarter_name": {
+                        "type": "string"
+                      },
+                      "period_name": {
+                        "type": "object",
+                        "additionalProperties": true
+                      },
+                      "rag_score": {
+                        "type": "string"
+                      },
+                      "last_update": {
+                        "type": "string"
+                      },
+                      "created_from": {
+                        "type": "string"
+                      },
+                      "stretch_target": {
+                        "type": "string"
+                      },
+                      "fy_quarter_kr": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "metric_automation": {
+                  "description": "The automation information for a Metric is available for some of our integrations. `null` if no automation is available.",
+                  "type": "object",
+                  "nullable": true,
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "source_plugins": {
+                          "description": "* This object is subject to change and is intentionally not documented. This denotes that the Metric progress is sourced from a plugin.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "external_sources": {
+                          "description": "* This object is subject to change and is intentionally not documented. This denotes that the Metric progress is sourced from an external application.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  ],
+                  "additionalProperties": true
+                },
+                "metric_achieve_target": {
+                  "description": "What has been achieved against the `metric_target`.",
+                  "type": "string"
+                },
+                "metric_data": {
+                  "description": "Included if `include_metric_data=yes`.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "metric_data_id": {
+                        "description": "The ID for the specific metric update field in WorkBoard.",
+                        "type": "string"
+                      },
+                      "metric_data_value": {
+                        "description": "Will be `null` when there was not an update.",
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "metric_data_created_at": {
+                        "description": "The timestamp for when the metric should be updated based upon the update cadence.",
+                        "type": "string"
+                      },
+                      "metric_data_created_by": {
+                        "description": "The user ID for the user that updated the metric (Key Result).",
+                        "type": "string"
+                      },
+                      "metric_data_updated_at": {
+                        "description": "The timestamp for when the metric was actually updated by the user, application or integration. Will be `\"0\"` when there was not an update.",
+                        "type": "string"
+                      },
+                      "metric_data_comment": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "metric_comments": {
+                  "description": "Included if `include_metric_data=yes`",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "comment": {
+                        "type": "string"
+                      },
+                      "modified_at": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "metric_mit_start_date": {
+                  "description": "Returned when the `metric_id` or `metric_id_path` is part of the request and `metric_source_from` = 12 or 13 or 14 (MIT). The unix timestamp for the start of the multiple interval time period (MIT) metric. This is based upon the earliest `child_kr`'s `start_date`.",
+                  "type": "string"
+                },
+                "metric_mit_end_date": {
+                  "description": "Returned when the `metric_id` or `metric_id_path` is part of the request and `metric_source_from` = 12 or 13 or 14 (MIT). The unix timestamp for the end of the multiple interval time period (MIT) metric. This is based upon the latest `child_kr`'s `end_date`.",
+                  "type": "string"
+                },
+                "metric_goal_source": {
+                  "description": "An array of the active Goal IDs when the `metric_source_from` is 7 (source from other Goals). Available when requesting a single Metric and Metric ID is used in the path (`metric_id_path`).",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Returns a single metric object for `metric_id` passed.",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "GET a single individual metric (key results) the user has access to. Use a Data-Admin token to get an organization's single metric.",
@@ -2123,30 +8174,166 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "metric": {
+              "description": "Returns an array of metrics if `metric_id` is not passed. Returns a single metric object when `metric_id` is passed.",
+              "type": "object",
+              "properties": {
+                "metric_id": {
+                  "description": "The numerical ID assigned to the Metric.",
+                  "type": "string"
+                },
+                "metric_goal_id": {
+                  "type": "string"
+                },
+                "metric_owner": {
+                  "type": "string"
+                },
+                "metric_real_owner": {
+                  "type": "string"
+                },
+                "metric_name": {
+                  "type": "string"
+                },
+                "metric_update_interval": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_update_interval_day": {
+                  "type": "string"
+                },
+                "metric_unit": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_progress_type": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_counting_type": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_initial_data": {
+                  "type": "string"
+                },
+                "metric_target": {
+                  "type": "string"
+                },
+                "metric_progress": {
+                  "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                  "type": "string"
+                },
+                "metric_progress_color": {
+                  "type": "string"
+                },
+                "metric_last_update": {
+                  "type": "string"
+                },
+                "metric_next_update": {
+                  "type": "string"
+                },
+                "metric_source_from": {
+                  "description": "The source for metric data updates. Possible values are:<br/>\"1\" - An individual user<br/>\"2\" - Progress on a workstream<br/>\"3\" - Another WorkBoard metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - A multi-user survey<br/>\"6\" - Rolled up from other goals",
+                  "type": "string"
+                },
+                "metric_create_at": {
+                  "type": "string",
+                  "description": "The GMT timestamp value for the created at time."
+                },
+                "metric_modified_at": {
+                  "type": "string"
+                },
+                "metric_created_by": {
+                  "type": "string"
+                },
+                "metric_updated_by": {
+                  "type": "string"
+                },
+                "metric_status": {
+                  "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                  "type": "string"
+                },
+                "metric_permission": {
+                  "type": "string"
+                },
+                "metric_confidence": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "confidence": {
+                        "type": "string"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "modified_at": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "metric_achieve_target": {
+                  "description": "What has been achieved against the `metric_target`.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update metric information",
@@ -2215,30 +8402,451 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "metric": {
+              "type": "object",
+              "properties": {
+                "metric_id": {
+                  "type": "string"
+                },
+                "metric_goal_id": {
+                  "type": "string"
+                },
+                "metric_owner": {
+                  "type": "string"
+                },
+                "metric_real_owner": {
+                  "type": "string"
+                },
+                "metric_name": {
+                  "type": "string"
+                },
+                "metric_update_interval": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_update_interval_day": {
+                  "type": "string"
+                },
+                "metric_unit": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_progress_type": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_counting_type": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "metric_initial_data": {
+                  "type": "string"
+                },
+                "metric_target": {
+                  "type": "string"
+                },
+                "metric_progress": {
+                  "description": "The `metric_achieve_target` divided by the `metric_target` as a percent.",
+                  "type": "string"
+                },
+                "metric_progress_color": {
+                  "type": "string"
+                },
+                "metric_last_update": {
+                  "type": "string"
+                },
+                "metric_next_update": {
+                  "type": "string"
+                },
+                "metric_source_from": {
+                  "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                  "type": "string"
+                },
+                "metric_create_at": {
+                  "type": "string",
+                  "description": "The GMT timestamp value for the created at time."
+                },
+                "metric_modified_at": {
+                  "type": "string"
+                },
+                "metric_created_by": {
+                  "type": "string"
+                },
+                "metric_updated_by": {
+                  "type": "string"
+                },
+                "metric_status": {
+                  "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                  "type": "string"
+                },
+                "metric_permission": {
+                  "type": "string"
+                },
+                "metric_confidence": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "confidence": {
+                        "type": "string"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "modified_at": {
+                        "type": "string"
+                      },
+                      "metric_data_id": {
+                        "type": "integer",
+                        "nullable": true,
+                        "description": "Only returned when querying (GET) for a single metric with the metric_id in the path. This value corresponds to an id in the metric_data array and links the confidence update to a specific metric data point. The metric_data array is only returned when include_metric_data=yes is part of the query string."
+                      }
+                    },
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "child_kr": {
+                  "description": "The children of the current metric (Key Result).",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "metric_id": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "metric": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "initial_data": {
+                        "type": "string"
+                      },
+                      "graph_type": {
+                        "type": "string"
+                      },
+                      "counting": {
+                        "type": "string"
+                      },
+                      "owner": {
+                        "type": "string"
+                      },
+                      "interval": {
+                        "type": "string"
+                      },
+                      "create_at": {
+                        "type": "string",
+                        "description": "The GMT timestamp value for the created at time."
+                      },
+                      "last_mod": {
+                        "type": "string",
+                        "description": "The GMT timestamp value for the modified at time."
+                      },
+                      "goal_id": {
+                        "type": "string"
+                      },
+                      "permission": {
+                        "type": "string"
+                      },
+                      "progress": {
+                        "type": "string"
+                      },
+                      "progress_color": {
+                        "type": "string"
+                      },
+                      "last_run": {
+                        "type": "string"
+                      },
+                      "next_run": {
+                        "type": "string"
+                      },
+                      "repeat_id": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "description": "The source for metric data updates. Possible values are:<br/>\"1\" - For an individual user.<br/>\"2\" - For a Workstream<br/>\"3\" - For a rollup of another Goal or Metric<br/>\"4\" - A workstream's cycle time<br/>\"5\" - Survey<br/>\"7\" - Other Goals<br/>\"8\" - External sources<br/>\"10\" - Datastream(s)<br/>\"11\" - For a mirrored Metric<br/>\"12\" - MIT: Multi-interval time period person<br/>\"13\" - MIT: Multi-interval time period automated datastream<br/>\"14\" - MIT: Multi-interval time period populates Q1,Q2, Q3, Q4.",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description": "The current state of the metric. Possible values are:<br/>\"0\" - Deleted<br/>\"1\" - Active<br/>\"2\" - Closed<br/>\"3\" - Excluded from Calculation",
+                        "type": "string"
+                      },
+                      "weekly_update_day": {
+                        "type": "string"
+                      },
+                      "progress_type": {
+                        "type": "string"
+                      },
+                      "measure_metric_data": {
+                        "type": "string"
+                      },
+                      "multiply_data": {
+                        "type": "string"
+                      },
+                      "lower_limit": {
+                        "type": "string"
+                      },
+                      "upper_limit": {
+                        "type": "string"
+                      },
+                      "progress_consider": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "goal_align_check": {
+                        "type": "string"
+                      },
+                      "goal_roll_up_check": {
+                        "type": "string"
+                      },
+                      "is_encrypted": {
+                        "type": "string"
+                      },
+                      "multiplier": {
+                        "type": "string"
+                      },
+                      "weightage": {
+                        "type": "string"
+                      },
+                      "stop_update": {
+                        "type": "string"
+                      },
+                      "achieve_target": {
+                        "type": "string"
+                      },
+                      "cascade_goal_id": {
+                        "type": "string"
+                      },
+                      "created_by": {
+                        "type": "string"
+                      },
+                      "modified_at": {
+                        "type": "string"
+                      },
+                      "start_date": {
+                        "description": "The start date of the metric.",
+                        "type": "string"
+                      },
+                      "end_date": {
+                        "description": "The end date of the metric.",
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "parent_goal_id": {
+                        "type": "string"
+                      },
+                      "real_owner": {
+                        "type": "string"
+                      },
+                      "parent": {
+                        "description": "The parent metric ID.",
+                        "type": "string"
+                      },
+                      "quarter_target_type": {
+                        "type": "string"
+                      },
+                      "quarter_name": {
+                        "type": "string"
+                      },
+                      "period_name": {
+                        "type": "object",
+                        "additionalProperties": true
+                      },
+                      "rag_score": {
+                        "type": "string"
+                      },
+                      "last_update": {
+                        "type": "string"
+                      },
+                      "created_from": {
+                        "type": "string"
+                      },
+                      "stretch_target": {
+                        "type": "string"
+                      },
+                      "fy_quarter_kr": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "metric_automation": {
+                  "description": "The automation information for a Metric is available for some of our integrations. `null` if no automation is available.",
+                  "type": "object",
+                  "nullable": true,
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "source_plugins": {
+                          "description": "* This object is subject to change and is intentionally not documented. This denotes that the Metric progress is sourced from a plugin.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "external_sources": {
+                          "description": "* This object is subject to change and is intentionally not documented. This denotes that the Metric progress is sourced from an external application.",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  ],
+                  "additionalProperties": true
+                },
+                "metric_achieve_target": {
+                  "description": "What has been achieved against the `metric_target`.",
+                  "type": "string"
+                },
+                "metric_data": {
+                  "description": "Included if `include_metric_data=yes`.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "metric_data_id": {
+                        "description": "The ID for the specific metric update field in WorkBoard.",
+                        "type": "string"
+                      },
+                      "metric_data_value": {
+                        "description": "Will be `null` when there was not an update.",
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "metric_data_created_at": {
+                        "description": "The timestamp for when the metric should be updated based upon the update cadence.",
+                        "type": "string"
+                      },
+                      "metric_data_created_by": {
+                        "description": "The user ID for the user that updated the metric (Key Result).",
+                        "type": "string"
+                      },
+                      "metric_data_updated_at": {
+                        "description": "The timestamp for when the metric was actually updated by the user, application or integration. Will be `\"0\"` when there was not an update.",
+                        "type": "string"
+                      },
+                      "metric_data_comment": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "metric_comments": {
+                  "description": "Included if `include_metric_data=yes`",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "comment": {
+                        "type": "string"
+                      },
+                      "modified_at": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "metric_mit_start_date": {
+                  "description": "Returned when the `metric_id` or `metric_id_path` is part of the request and `metric_source_from` = 12 or 13 or 14 (MIT). The unix timestamp for the start of the multiple interval time period (MIT) metric. This is based upon the earliest `child_kr`'s `start_date`.",
+                  "type": "string"
+                },
+                "metric_mit_end_date": {
+                  "description": "Returned when the `metric_id` or `metric_id_path` is part of the request and `metric_source_from` = 12 or 13 or 14 (MIT). The unix timestamp for the end of the multiple interval time period (MIT) metric. This is based upon the latest `child_kr`'s `end_date`.",
+                  "type": "string"
+                },
+                "metric_goal_source": {
+                  "description": "An array of the active Goal IDs when the `metric_source_from` is 7 (source from other Goals). Available when requesting a single Metric and Metric ID is used in the path (`metric_id_path`).",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Returns the updated metric object.",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update the confidence score (RAG) of a metric (key result)",
@@ -2285,30 +8893,60 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "type": "string"
+                  },
+                  "group_name": {
+                    "type": "string"
+                  },
+                  "group_status": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "updated_date": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Returns all tags mapped to the given metric in the system.",
@@ -2366,31 +9004,16 @@ export const workboardOperations = [
       ]
     },
     "outputSchema": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
         "status": {
-          "type": "integer"
-        },
-        "url": {
           "type": "string"
         },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "message": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Add multiple tags to the given metric. Maximum tag list allowed is 50 per request. Only valid tags will be considered.",
@@ -2452,30 +9075,17 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "message": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Delete given tag lists mapped to the metric.",
@@ -2521,30 +9131,75 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "metrics": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "group_id": {
+                          "type": "string"
+                        },
+                        "group_name": {
+                          "type": "string"
+                        },
+                        "group_status": {
+                          "type": "string"
+                        },
+                        "updated_by": {
+                          "type": "string"
+                        },
+                        "updated_date": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  }
+                },
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Returns all key result tags mapped to the given metrics in the system.",
@@ -2599,30 +9254,51 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "metrics": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "updated_date": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Returns all metrics mapped to the given tagid.",
@@ -2676,30 +9352,17 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "message": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Add multiple tags to multiple metrics. Maximum tag list allowed is 50 per request. Only valid tags will be considered.",
@@ -2755,30 +9418,68 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "type": "string"
+                  },
+                  "group_name": {
+                    "type": "string"
+                  },
+                  "group_status": {
+                    "type": "string"
+                  },
+                  "created_date": {
+                    "type": "string"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_date": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "updated_by": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Returns all key result tags in the system and allows for filtering tags by parameters.",
@@ -2824,30 +9525,68 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "type": "string"
+                  },
+                  "group_name": {
+                    "type": "string"
+                  },
+                  "group_status": {
+                    "type": "string"
+                  },
+                  "created_date": {
+                    "type": "string"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_date": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "updated_by": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Returns the specified key result tag.",
@@ -2938,30 +9677,305 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "activity": {
+              "description": "Returns an array of activities if `ai_id` is not passed. Returns a single activity object when `ai_id` is passed.",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "ai_id": {
+                      "type": "string"
+                    },
+                    "ai_description": {
+                      "type": "string"
+                    },
+                    "ai_created_at": {
+                      "type": "string"
+                    },
+                    "ai_state": {
+                      "type": "string"
+                    },
+                    "ai_rating": {
+                      "type": "string"
+                    },
+                    "ai_priority": {
+                      "type": "string"
+                    },
+                    "ai_effort": {
+                      "type": "string"
+                    },
+                    "ai_files": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "file_id": {
+                            "type": "string"
+                          },
+                          "file_name": {
+                            "type": "string"
+                          },
+                          "file_url": {
+                            "type": "string"
+                          },
+                          "file_owner": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "ai_sub_actions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sub_ai_id": {
+                            "type": "string"
+                          },
+                          "sub_ai_description": {
+                            "type": "string"
+                          },
+                          "sub_ai_owner": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "ai_comments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "string"
+                          },
+                          "comment": {
+                            "type": "string"
+                          },
+                          "comment_owner": {
+                            "type": "string"
+                          },
+                          "comment_timestamp": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "ai_due_date": {
+                      "type": "string"
+                    },
+                    "ai_workstream": {
+                      "type": "string"
+                    },
+                    "ai_team": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "ai_workstream_name": {
+                      "type": "string"
+                    },
+                    "ai_loop_members": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "user_email": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "ai_tags": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "ai_due_before": {
+                      "type": "string"
+                    },
+                    "ai_owner": {
+                      "type": "string"
+                    },
+                    "ai_created_by": {
+                      "type": "string"
+                    },
+                    "ai_url": {
+                      "type": "string"
+                    },
+                    "ai_completed_at": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ai_id": {
+                        "type": "string"
+                      },
+                      "ai_description": {
+                        "type": "string"
+                      },
+                      "ai_created_at": {
+                        "type": "string"
+                      },
+                      "ai_state": {
+                        "type": "string"
+                      },
+                      "ai_rating": {
+                        "type": "string"
+                      },
+                      "ai_priority": {
+                        "type": "string"
+                      },
+                      "ai_effort": {
+                        "type": "string"
+                      },
+                      "ai_files": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "file_id": {
+                              "type": "string"
+                            },
+                            "file_name": {
+                              "type": "string"
+                            },
+                            "file_url": {
+                              "type": "string"
+                            },
+                            "file_owner": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      },
+                      "ai_sub_actions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "sub_ai_id": {
+                              "type": "string"
+                            },
+                            "sub_ai_description": {
+                              "type": "string"
+                            },
+                            "sub_ai_owner": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      },
+                      "ai_comments": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "comment_id": {
+                              "type": "string"
+                            },
+                            "comment": {
+                              "type": "string"
+                            },
+                            "comment_owner": {
+                              "type": "string"
+                            },
+                            "comment_timestamp": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      },
+                      "ai_due_date": {
+                        "type": "string"
+                      },
+                      "ai_workstream": {
+                        "type": "string"
+                      },
+                      "ai_team": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "ai_workstream_name": {
+                        "type": "string"
+                      },
+                      "ai_loop_members": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "user_id": {
+                              "type": "string"
+                            },
+                            "user_email": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      },
+                      "ai_tags": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "ai_due_before": {
+                        "type": "string"
+                      },
+                      "ai_owner": {
+                        "type": "string"
+                      },
+                      "ai_created_by": {
+                        "type": "string"
+                      },
+                      "ai_url": {
+                        "type": "string"
+                      },
+                      "ai_completed_at": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "List the details of existing action items. By default, this query will return the first 50 items that match your request parameters. Use the offset and limit parameters to return a different set.",
@@ -3072,30 +10086,163 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "activity": {
+              "type": "object",
+              "properties": {
+                "ai_id": {
+                  "type": "string"
+                },
+                "ai_description": {
+                  "type": "string"
+                },
+                "ai_created_at": {
+                  "type": "string"
+                },
+                "ai_state": {
+                  "type": "string"
+                },
+                "ai_rating": {
+                  "type": "string"
+                },
+                "ai_priority": {
+                  "type": "string"
+                },
+                "ai_effort": {
+                  "type": "string"
+                },
+                "ai_files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "file_id": {
+                        "type": "string"
+                      },
+                      "file_name": {
+                        "type": "string"
+                      },
+                      "file_url": {
+                        "type": "string"
+                      },
+                      "file_owner": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_sub_actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sub_ai_id": {
+                        "type": "string"
+                      },
+                      "sub_ai_description": {
+                        "type": "string"
+                      },
+                      "sub_ai_owner": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_comments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "comment_id": {
+                        "type": "string"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "comment_owner": {
+                        "type": "string"
+                      },
+                      "comment_timestamp": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_due_date": {
+                  "type": "string"
+                },
+                "ai_workstream": {
+                  "type": "string"
+                },
+                "ai_team": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ai_workstream_name": {
+                  "type": "string"
+                },
+                "ai_loop_members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "user_email": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_tags": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ai_due_before": {
+                  "type": "string"
+                },
+                "ai_owner": {
+                  "type": "string"
+                },
+                "ai_created_by": {
+                  "type": "string"
+                },
+                "ai_url": {
+                  "type": "string"
+                },
+                "ai_completed_at": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "description": "Returns a single activity object.",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create an action item.",
@@ -3141,30 +10288,163 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "activity": {
+              "type": "object",
+              "properties": {
+                "ai_id": {
+                  "type": "string"
+                },
+                "ai_description": {
+                  "type": "string"
+                },
+                "ai_created_at": {
+                  "type": "string"
+                },
+                "ai_state": {
+                  "type": "string"
+                },
+                "ai_rating": {
+                  "type": "string"
+                },
+                "ai_priority": {
+                  "type": "string"
+                },
+                "ai_effort": {
+                  "type": "string"
+                },
+                "ai_files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "file_id": {
+                        "type": "string"
+                      },
+                      "file_name": {
+                        "type": "string"
+                      },
+                      "file_url": {
+                        "type": "string"
+                      },
+                      "file_owner": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_sub_actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sub_ai_id": {
+                        "type": "string"
+                      },
+                      "sub_ai_description": {
+                        "type": "string"
+                      },
+                      "sub_ai_owner": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_comments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "comment_id": {
+                        "type": "string"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "comment_owner": {
+                        "type": "string"
+                      },
+                      "comment_timestamp": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_due_date": {
+                  "type": "string"
+                },
+                "ai_workstream": {
+                  "type": "string"
+                },
+                "ai_team": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ai_workstream_name": {
+                  "type": "string"
+                },
+                "ai_loop_members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "user_email": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_tags": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ai_due_before": {
+                  "type": "string"
+                },
+                "ai_owner": {
+                  "type": "string"
+                },
+                "ai_created_by": {
+                  "type": "string"
+                },
+                "ai_url": {
+                  "type": "string"
+                },
+                "ai_completed_at": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "description": "Returns an array of activities if `ai_id` is not passed. Returns a single activity object when `ai_id` is passed.",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "List the details of existing action items. By default, this query will return the first 50 items that match your request parameters. Use the offset and limit parameters to return a different set.",
@@ -3288,30 +10568,163 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "activity": {
+              "type": "object",
+              "properties": {
+                "ai_id": {
+                  "type": "string"
+                },
+                "ai_description": {
+                  "type": "string"
+                },
+                "ai_created_at": {
+                  "type": "string"
+                },
+                "ai_state": {
+                  "type": "string"
+                },
+                "ai_rating": {
+                  "type": "string"
+                },
+                "ai_priority": {
+                  "type": "string"
+                },
+                "ai_effort": {
+                  "type": "string"
+                },
+                "ai_files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "file_id": {
+                        "type": "string"
+                      },
+                      "file_name": {
+                        "type": "string"
+                      },
+                      "file_url": {
+                        "type": "string"
+                      },
+                      "file_owner": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_sub_actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sub_ai_id": {
+                        "type": "string"
+                      },
+                      "sub_ai_description": {
+                        "type": "string"
+                      },
+                      "sub_ai_owner": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_comments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "comment_id": {
+                        "type": "string"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "comment_owner": {
+                        "type": "string"
+                      },
+                      "comment_timestamp": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_due_date": {
+                  "type": "string"
+                },
+                "ai_workstream": {
+                  "type": "string"
+                },
+                "ai_team": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ai_workstream_name": {
+                  "type": "string"
+                },
+                "ai_loop_members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "type": "string"
+                      },
+                      "user_email": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ai_tags": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ai_due_before": {
+                  "type": "string"
+                },
+                "ai_owner": {
+                  "type": "string"
+                },
+                "ai_created_by": {
+                  "type": "string"
+                },
+                "ai_url": {
+                  "type": "string"
+                },
+                "ai_completed_at": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "description": "Returns an array of activities if `ai_id` is not passed. Returns a single activity object when `ai_id` is passed.",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update an activity.",
@@ -3355,30 +10768,179 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "workstream": {
+              "description": "Returns an array of Workstream if `ws_id` is not passed. Returns a single Workstream object when `ws_id` is passed.",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "ws_id": {
+                      "type": "string"
+                    },
+                    "ws_name": {
+                      "type": "string"
+                    },
+                    "ws_objective": {
+                      "type": "string"
+                    },
+                    "ws_owner": {
+                      "type": "string"
+                    },
+                    "ws_lead": {
+                      "type": "string"
+                    },
+                    "ws_status": {
+                      "type": "string"
+                    },
+                    "ws_type": {
+                      "type": "string"
+                    },
+                    "ws_effort": {
+                      "type": "object",
+                      "properties": {
+                        "low_effort": {
+                          "type": "string"
+                        },
+                        "medium_effort": {
+                          "type": "string"
+                        },
+                        "large_effort": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "ws_pace": {
+                      "type": "string"
+                    },
+                    "ws_health": {
+                      "type": "string"
+                    },
+                    "ws_priority": {
+                      "type": "string"
+                    },
+                    "ws_progress": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "ws_start_date": {
+                      "type": "string"
+                    },
+                    "ws_target_date": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "ws_completion_date": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "ws_team_id": {
+                      "type": "string"
+                    },
+                    "ws_team_name": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ws_id": {
+                        "type": "string"
+                      },
+                      "ws_name": {
+                        "type": "string"
+                      },
+                      "ws_objective": {
+                        "type": "string"
+                      },
+                      "ws_owner": {
+                        "type": "string"
+                      },
+                      "ws_lead": {
+                        "type": "string"
+                      },
+                      "ws_status": {
+                        "type": "string"
+                      },
+                      "ws_type": {
+                        "type": "string"
+                      },
+                      "ws_effort": {
+                        "type": "object",
+                        "properties": {
+                          "low_effort": {
+                            "type": "string"
+                          },
+                          "medium_effort": {
+                            "type": "string"
+                          },
+                          "large_effort": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "ws_pace": {
+                        "type": "string"
+                      },
+                      "ws_health": {
+                        "type": "string"
+                      },
+                      "ws_priority": {
+                        "type": "string"
+                      },
+                      "ws_progress": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "ws_start_date": {
+                        "type": "string"
+                      },
+                      "ws_target_date": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "ws_completion_date": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "ws_team_id": {
+                        "type": "string"
+                      },
+                      "ws_team_name": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get the details of Team Workstreams to which the authenticated user (token user) has access.",
@@ -3437,30 +10999,39 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer",
+              "description": "Returns the number of Workstreams created."
+            },
+            "workstream": {
+              "description": "",
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create a Workstream for a team.",
@@ -3551,30 +11122,39 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer",
+              "description": "Returns the number of Workstreams created."
+            },
+            "workstream": {
+              "description": "",
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update a Workstream for a team.",
@@ -3621,29 +11201,7 @@ export const workboardOperations = [
     "outputSchema": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
-      "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+      "properties": {}
     },
     "annotations": {
       "title": "Delete a Workstream with all its action items. A successful request will return a 204 code.",
@@ -3689,30 +11247,247 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "workstream": {
+              "description": "",
+              "type": "object",
+              "properties": {
+                "ws_id": {
+                  "type": "string"
+                },
+                "ws_name": {
+                  "type": "string"
+                },
+                "ws_objective": {
+                  "type": "string"
+                },
+                "ws_owner": {
+                  "type": "string"
+                },
+                "ws_lead": {
+                  "type": "string"
+                },
+                "ws_status": {
+                  "type": "string"
+                },
+                "ws_type": {
+                  "type": "string"
+                },
+                "ws_effort": {
+                  "type": "object",
+                  "properties": {
+                    "low_effort": {
+                      "type": "string"
+                    },
+                    "medium_effort": {
+                      "type": "string"
+                    },
+                    "large_effort": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "ws_pace": {
+                  "type": "string"
+                },
+                "ws_health": {
+                  "type": "string"
+                },
+                "ws_priority": {
+                  "type": "string"
+                },
+                "ws_progress": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ws_start_date": {
+                  "type": "string"
+                },
+                "ws_target_date": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ws_completion_date": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ws_team_id": {
+                  "type": "string"
+                },
+                "ws_team_name": {
+                  "type": "string"
+                },
+                "ws_activity": {
+                  "type": "object",
+                  "properties": {
+                    "activity": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ai_id": {
+                            "type": "string"
+                          },
+                          "ai_description": {
+                            "type": "string"
+                          },
+                          "ai_created_at": {
+                            "type": "string"
+                          },
+                          "ai_state": {
+                            "type": "string"
+                          },
+                          "ai_rating": {
+                            "type": "string"
+                          },
+                          "ai_priority": {
+                            "type": "string"
+                          },
+                          "ai_effort": {
+                            "type": "string"
+                          },
+                          "ai_files": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "file_id": {
+                                  "type": "string"
+                                },
+                                "file_name": {
+                                  "type": "string"
+                                },
+                                "file_url": {
+                                  "type": "string"
+                                },
+                                "file_owner": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          },
+                          "ai_sub_actions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "sub_ai_id": {
+                                  "type": "string"
+                                },
+                                "sub_ai_description": {
+                                  "type": "string"
+                                },
+                                "sub_ai_owner": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          },
+                          "ai_comments": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "comment_id": {
+                                  "type": "string"
+                                },
+                                "comment": {
+                                  "type": "string"
+                                },
+                                "comment_owner": {
+                                  "type": "string"
+                                },
+                                "comment_timestamp": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          },
+                          "ai_due_date": {
+                            "type": "string"
+                          },
+                          "ai_workstream": {
+                            "type": "string"
+                          },
+                          "ai_team": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "ai_workstream_name": {
+                            "type": "string"
+                          },
+                          "ai_loop_members": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "user_id": {
+                                  "type": "string"
+                                },
+                                "user_email": {
+                                  "type": "string"
+                                }
+                              },
+                              "additionalProperties": true
+                            }
+                          },
+                          "ai_tags": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "ai_due_before": {
+                            "type": "string"
+                          },
+                          "ai_owner": {
+                            "type": "string"
+                          },
+                          "ai_created_by": {
+                            "type": "string"
+                          },
+                          "ai_url": {
+                            "type": "string"
+                          },
+                          "ai_completed_at": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "activity_count": {
+                      "type": "integer"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "List details of all action items belonging to the specified Workstream.",
@@ -3741,30 +11516,72 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "stream": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stream_id": {
+                    "type": "string"
+                  },
+                  "stream_private_key": {
+                    "type": "string"
+                  },
+                  "stream_name": {
+                    "type": "string"
+                  },
+                  "stream_frequency": {
+                    "type": "string"
+                  },
+                  "stream_category": {
+                    "type": "string"
+                  },
+                  "stream_data_type": {
+                    "type": "string"
+                  },
+                  "stream_description": {
+                    "type": "string"
+                  },
+                  "stream_active": {
+                    "type": "string"
+                  },
+                  "stream_connector_id": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "stream_data_last_updated": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "stream_last_data_value": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get the details of datastreams to which the authenticated user has access.",
@@ -3845,30 +11662,69 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "stream": {
+              "type": "object",
+              "properties": {
+                "stream_id": {
+                  "type": "string"
+                },
+                "stream_private_key": {
+                  "type": "string"
+                },
+                "stream_name": {
+                  "type": "string"
+                },
+                "stream_frequency": {
+                  "type": "string"
+                },
+                "stream_category": {
+                  "type": "string"
+                },
+                "stream_data_type": {
+                  "type": "string"
+                },
+                "stream_description": {
+                  "type": "string"
+                },
+                "stream_active": {
+                  "type": "string"
+                },
+                "stream_connector_id": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "stream_data_last_updated": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "stream_last_data_value": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create a datastream.",
@@ -3998,30 +11854,72 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "stream": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stream_id": {
+                    "type": "string"
+                  },
+                  "stream_private_key": {
+                    "type": "string"
+                  },
+                  "stream_name": {
+                    "type": "string"
+                  },
+                  "stream_frequency": {
+                    "type": "string"
+                  },
+                  "stream_category": {
+                    "type": "string"
+                  },
+                  "stream_data_type": {
+                    "type": "string"
+                  },
+                  "stream_description": {
+                    "type": "string"
+                  },
+                  "stream_active": {
+                    "type": "string"
+                  },
+                  "stream_connector_id": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "stream_data_last_updated": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "stream_last_data_value": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update the value(s) in your datastream.",
@@ -4085,30 +11983,31 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "success": {
+          "type": "boolean",
+          "readOnly": true
         },
-        "status": {
-          "type": "integer"
+        "message": {
+          "type": "string",
+          "readOnly": true
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
+        "data": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+          "readOnly": true,
+          "properties": {
+            "totalCount": {
+              "type": "integer"
+            },
+            "hook": {
+              "type": "array",
+              "items": {}
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update progress on Metrics using webhooks.",
@@ -4154,30 +12053,68 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
+        "definitions": {
+          "description": "Custom field definitions for the org",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "description": "Attribute definition ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Attribute name / label"
+              },
+              "fieldType": {
+                "type": "string",
+                "description": "Field type",
+                "enum": [
+                  "text",
+                  "textarea",
+                  "single_select",
+                  "multi_select"
+                ]
+              },
+              "options": {
+                "description": "Available options for single_select and multi_select fields; empty for text/textarea.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "objectType": {
+                "type": "string",
+                "description": "Object type this definition applies to",
+                "enum": [
+                  "objective",
+                  "key_result",
+                  "work_item",
+                  "user"
+                ]
+              },
+              "objectSubtype": {
+                "type": "string",
+                "description": "Comma-separated list of object subtypes this definition applies to. Only present for work_item definitions. Values: 0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "fieldType",
+              "options",
+              "objectType"
+            ],
+            "additionalProperties": true
           }
-        },
-        "body": {}
-      }
+        }
+      },
+      "required": [
+        "definitions"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "List custom field definitions for the org",
@@ -4237,30 +12174,164 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "attributeId": {
+          "type": "number",
+          "description": "Custom attribute definition ID that was queried"
         },
-        "status": {
-          "type": "integer"
+        "definition": {
+          "description": "The attribute definition metadata (echoed for convenience)",
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "description": "Attribute definition ID"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Attribute name / label"
+                },
+                "fieldType": {
+                  "type": "string",
+                  "description": "Field type",
+                  "enum": [
+                    "text",
+                    "textarea",
+                    "single_select",
+                    "multi_select"
+                  ]
+                },
+                "options": {
+                  "description": "Available options for single_select and multi_select fields; empty for text/textarea.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "objectType": {
+                  "type": "string",
+                  "description": "Object type this definition applies to",
+                  "enum": [
+                    "objective",
+                    "key_result",
+                    "work_item",
+                    "user"
+                  ]
+                },
+                "objectSubtype": {
+                  "type": "string",
+                  "description": "Comma-separated list of object subtypes this definition applies to. Only present for work_item definitions. Values: 0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone."
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "fieldType",
+                "options",
+                "objectType"
+              ],
+              "additionalProperties": true
+            }
+          ]
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
+        "objects": {
+          "description": "Objects in the caller's org that have a value for this attribute",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objectId": {
+                "type": "number",
+                "description": "ID of the object that has a value for the attribute"
+              },
+              "objectType": {
+                "type": "string",
+                "description": "Object type this row represents (always matches the definition)",
+                "enum": [
+                  "objective",
+                  "key_result",
+                  "work_item",
+                  "user"
+                ]
+              },
+              "value": {
+                "description": "Current value. String for text/textarea/single_select; string array for multi_select; null when unset.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "Display name of the object. Present for objective, key_result, and work_item rows."
+              },
+              "firstName": {
+                "type": "string",
+                "description": "First name. Present only for user rows."
+              },
+              "lastName": {
+                "type": "string",
+                "description": "Last name. Present only for user rows."
+              },
+              "email": {
+                "type": "string",
+                "description": "Email. Present only for user rows."
+              },
+              "objectSubtype": {
+                "type": "string",
+                "description": "Work item subtype (0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone). Present only for work_item rows when set."
+              }
+            },
+            "required": [
+              "objectId",
+              "objectType",
+              "value"
+            ],
+            "additionalProperties": true
           }
         },
-        "body": {}
-      }
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "number",
+              "description": "Page size used for this response"
+            },
+            "offset": {
+              "type": "number",
+              "description": "Offset that was applied to produce this page"
+            },
+            "nextOffset": {
+              "type": "number",
+              "description": "Offset to pass on the next request to retrieve the following page. Null when this is the final page.",
+              "nullable": true
+            }
+          },
+          "required": [
+            "limit",
+            "offset",
+            "nextOffset"
+          ],
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "attributeId",
+        "definition",
+        "objects",
+        "pagination"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "List every object that has a value for a custom attribute",
@@ -4320,30 +12391,80 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "id": {
+          "type": "number",
+          "description": "Object ID"
         },
-        "status": {
-          "type": "integer"
+        "objectType": {
+          "type": "string",
+          "description": "Object type",
+          "enum": [
+            "objective",
+            "key_result",
+            "work_item",
+            "user"
+          ]
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
+        "customAttributes": {
+          "description": "Custom attribute values",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "description": "Attribute definition ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Attribute name / label"
+              },
+              "value": {
+                "description": "Current value. String for text/textarea/single_select; string array for multi_select; null when unset.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "nullable": true
+              },
+              "fieldType": {
+                "type": "string",
+                "description": "Field type",
+                "enum": [
+                  "text",
+                  "textarea",
+                  "single_select",
+                  "multi_select"
+                ]
+              },
+              "objectSubtype": {
+                "type": "string",
+                "description": "Object subtype (work items only). Values: 0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "value"
+            ],
+            "additionalProperties": true
           }
-        },
-        "body": {}
-      }
+        }
+      },
+      "required": [
+        "id",
+        "objectType",
+        "customAttributes"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get custom attribute values for an Objective",
@@ -4418,30 +12539,16 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update a custom attribute value on an Objective",
@@ -4516,30 +12623,16 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create (set) a custom attribute value on an Objective",
@@ -4591,29 +12684,7 @@ export const workboardOperations = [
     "outputSchema": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
-      "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+      "properties": {}
     },
     "annotations": {
       "title": "Clear a custom attribute value from an Objective",
@@ -4673,30 +12744,80 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "id": {
+          "type": "number",
+          "description": "Object ID"
         },
-        "status": {
-          "type": "integer"
+        "objectType": {
+          "type": "string",
+          "description": "Object type",
+          "enum": [
+            "objective",
+            "key_result",
+            "work_item",
+            "user"
+          ]
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
+        "customAttributes": {
+          "description": "Custom attribute values",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "description": "Attribute definition ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Attribute name / label"
+              },
+              "value": {
+                "description": "Current value. String for text/textarea/single_select; string array for multi_select; null when unset.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "nullable": true
+              },
+              "fieldType": {
+                "type": "string",
+                "description": "Field type",
+                "enum": [
+                  "text",
+                  "textarea",
+                  "single_select",
+                  "multi_select"
+                ]
+              },
+              "objectSubtype": {
+                "type": "string",
+                "description": "Object subtype (work items only). Values: 0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "value"
+            ],
+            "additionalProperties": true
           }
-        },
-        "body": {}
-      }
+        }
+      },
+      "required": [
+        "id",
+        "objectType",
+        "customAttributes"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get custom attribute values for a Key Result",
@@ -4771,30 +12892,16 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update a custom attribute value on a Key Result",
@@ -4869,30 +12976,16 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create (set) a custom attribute value on a Key Result",
@@ -4944,29 +13037,7 @@ export const workboardOperations = [
     "outputSchema": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
-      "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+      "properties": {}
     },
     "annotations": {
       "title": "Clear a custom attribute value from a Key Result",
@@ -5026,30 +13097,80 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "id": {
+          "type": "number",
+          "description": "Object ID"
         },
-        "status": {
-          "type": "integer"
+        "objectType": {
+          "type": "string",
+          "description": "Object type",
+          "enum": [
+            "objective",
+            "key_result",
+            "work_item",
+            "user"
+          ]
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
+        "customAttributes": {
+          "description": "Custom attribute values",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "description": "Attribute definition ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Attribute name / label"
+              },
+              "value": {
+                "description": "Current value. String for text/textarea/single_select; string array for multi_select; null when unset.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "nullable": true
+              },
+              "fieldType": {
+                "type": "string",
+                "description": "Field type",
+                "enum": [
+                  "text",
+                  "textarea",
+                  "single_select",
+                  "multi_select"
+                ]
+              },
+              "objectSubtype": {
+                "type": "string",
+                "description": "Object subtype (work items only). Values: 0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "value"
+            ],
+            "additionalProperties": true
           }
-        },
-        "body": {}
-      }
+        }
+      },
+      "required": [
+        "id",
+        "objectType",
+        "customAttributes"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get custom attribute values for a Work Item",
@@ -5124,30 +13245,16 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update a custom attribute value on a Work Item",
@@ -5222,30 +13329,16 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create (set) a custom attribute value on a Work Item",
@@ -5297,29 +13390,7 @@ export const workboardOperations = [
     "outputSchema": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
-      "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+      "properties": {}
     },
     "annotations": {
       "title": "Clear a custom attribute value from a Work Item",
@@ -5379,30 +13450,80 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "id": {
+          "type": "number",
+          "description": "Object ID"
         },
-        "status": {
-          "type": "integer"
+        "objectType": {
+          "type": "string",
+          "description": "Object type",
+          "enum": [
+            "objective",
+            "key_result",
+            "work_item",
+            "user"
+          ]
         },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
+        "customAttributes": {
+          "description": "Custom attribute values",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "description": "Attribute definition ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Attribute name / label"
+              },
+              "value": {
+                "description": "Current value. String for text/textarea/single_select; string array for multi_select; null when unset.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "nullable": true
+              },
+              "fieldType": {
+                "type": "string",
+                "description": "Field type",
+                "enum": [
+                  "text",
+                  "textarea",
+                  "single_select",
+                  "multi_select"
+                ]
+              },
+              "objectSubtype": {
+                "type": "string",
+                "description": "Object subtype (work items only). Values: 0 = Action, 1 = Risk, 2 = Assumption, 3 = Milestone."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "value"
+            ],
+            "additionalProperties": true
           }
-        },
-        "body": {}
-      }
+        }
+      },
+      "required": [
+        "id",
+        "objectType",
+        "customAttributes"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Get custom attribute values for a User",
@@ -5477,30 +13598,16 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Update a custom attribute value on a User",
@@ -5575,30 +13682,16 @@ export const workboardOperations = [
     },
     "outputSchema": {
       "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
       "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "additionalProperties": true
     },
     "annotations": {
       "title": "Create (set) a custom attribute value on a User",
@@ -5650,29 +13743,7 @@ export const workboardOperations = [
     "outputSchema": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "ok",
-        "status",
-        "url"
-      ],
-      "properties": {
-        "ok": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "integer"
-        },
-        "url": {
-          "type": "string"
-        },
-        "headers": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "body": {}
-      }
+      "properties": {}
     },
     "annotations": {
       "title": "Clear a custom attribute value from a User",

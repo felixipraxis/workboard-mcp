@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import type { JsonSchema } from "./types";
+import { jsonSchemaToZod } from "./json-schema-to-zod";
 import { workboardOperations } from "./operations";
 
 describe("workboardOperations", () => {
@@ -21,9 +23,43 @@ describe("workboardOperations", () => {
       expect(operation.requiredScope).toMatch(/^workboard:(read|write)$/);
       expect(operation.inputSchema.type).toBe("object");
       expect(operation.outputSchema.type).toBe("object");
+      const outputSchema = operation.outputSchema as JsonSchema;
+      expect(outputSchema.required).not.toEqual(["ok", "status", "url"]);
+      expect(outputSchema.properties?.ok).toBeUndefined();
+      expect(outputSchema.properties?.url).toBeUndefined();
+      expect(outputSchema.properties?.headers).toBeUndefined();
+      expect(outputSchema.properties?.body).toBeUndefined();
       expect(operation.annotations.title).toEqual(operation.title);
       expect(operation.annotations.openWorldHint).toBe(true);
       expect(operation.annotations.readOnlyHint).toBe(operation.method === "GET");
     }
+  });
+
+  it("validates the direct Workboard activity response body, not the old transport envelope", () => {
+    const operation = workboardOperations.find(
+      (item) => item.name === "workboard_v1_get_activity",
+    );
+
+    expect(operation).toBeDefined();
+    const outputSchema = jsonSchemaToZod(operation!.outputSchema);
+
+    expect(() =>
+      outputSchema.parse({
+        success: true,
+        message: "",
+        data: {
+          totalCount: 37,
+          activity: [
+            {
+              ai_id: "15180100",
+              ai_description: "eDiary Admin SOP VV-0011102",
+              ai_note: "Extra field present in real Workboard responses.",
+              ai_column: { id: "416255", name: "Core Goals Sprint" },
+            },
+          ],
+          next_page_token: "offset-token",
+        },
+      }),
+    ).not.toThrow();
   });
 });
