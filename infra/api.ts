@@ -16,9 +16,8 @@ export const database = new sst.aws.Aurora("WorkboardPostgres", {
   database: "workboard_mcp",
   dataApi: true,
   scaling: {
-    min: "0 ACU",
-    max: "4 ACU",
-    pauseAfter: "5 minutes",
+    min: "1 ACU",
+    max: "10 ACU",
   },
   dev: {
     username: "postgres",
@@ -65,8 +64,8 @@ export const api = new sst.aws.Service(
   "WorkboardApi",
   {
     cluster,
-    cpu: "0.25 vCPU",
-    memory: "0.5 GB",
+    cpu: "1 vCPU",
+    memory: "2 GB",
     link: [
       database,
       betterAuthSecret,

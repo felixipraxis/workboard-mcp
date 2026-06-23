@@ -66,6 +66,15 @@ describe("Workboard MCP tools", () => {
     const { registerWorkboardTools } = await import("./workboard");
     registerWorkboardTools({ registerTool } as unknown as McpServer);
 
+    expect(registerTool).toHaveBeenCalledWith(
+      "v1_get_activity",
+      expect.objectContaining({
+        inputSchema: {},
+      }),
+      expect.any(Function),
+    );
+    expect(registerTool.mock.calls[0]?.[1]).not.toHaveProperty("outputSchema");
+
     const result = await handlerRef.current?.(
       {},
       {

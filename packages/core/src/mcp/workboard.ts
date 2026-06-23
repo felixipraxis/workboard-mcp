@@ -17,7 +17,6 @@ export function registerWorkboardTools(server: McpServer) {
         title: operation.title,
         description: operation.description,
         inputSchema: jsonSchemaToZod(operation.inputSchema),
-        outputSchema: jsonSchemaToZod(operation.outputSchema),
         annotations: operation.annotations,
         _meta: {
           "workboard/version": operation.version,
