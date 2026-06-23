@@ -19,6 +19,27 @@ const authMetadata = oauthProviderAuthServerMetadata(auth);
 const openIdMetadata = oauthProviderOpenIdConfigMetadata(auth);
 const metadataOptions = metadataCorsOptionsRequestHandler();
 
+app.use("*", async (c, next) => {
+  const path = new URL(c.req.raw.url).pathname;
+  if (!shouldProbeRequest(path)) return next();
+
+  const startedAt = Date.now();
+  try {
+    await next();
+  } finally {
+    console.info("[workboard-http-probe]", {
+      authHeaderLength: c.req.raw.headers.get("authorization")?.length ?? 0,
+      contentType: c.req.raw.headers.get("content-type"),
+      host: c.req.raw.headers.get("host"),
+      method: c.req.raw.method,
+      ms: Date.now() - startedAt,
+      path,
+      status: c.res.status,
+      userAgent: c.req.raw.headers.get("user-agent"),
+    });
+  }
+});
+
 app.get("/", (c) =>
   c.json({
     ok: true,
@@ -116,6 +137,14 @@ app.all("/mcp", (c) => authenticatedMcpHandler(c.req.raw));
 
 async function getSession(headers: Headers) {
   return auth.api.getSession({ headers });
+}
+
+function shouldProbeRequest(path: string) {
+  return (
+    path === "/mcp" ||
+    path.startsWith("/api/auth/oauth2/token") ||
+    path.startsWith("/.well-known/oauth-protected-resource")
+  );
 }
 
 function oauthQueryString(request: Request) {

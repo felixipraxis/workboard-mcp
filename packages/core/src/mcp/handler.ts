@@ -1,8 +1,9 @@
 import { mcpHandler as betterAuthMcpHandler } from "@better-auth/oauth-provider";
 import { oauthProviderResourceClient } from "@better-auth/oauth-provider/resource-client";
 import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import type { JWTPayload } from "jose";
-import { createMcpHandler } from "mcp-handler";
 import { auth } from "../auth/auth";
 import { getAuthIssuer, getMcpResourceUrl } from "../config";
 import { registerWorkboardTools } from "./workboard";
@@ -12,6 +13,10 @@ export const workboardMcpResourceMetadataPath =
 
 const resourceClient = oauthProviderResourceClient(auth).getActions();
 const workboardMcpScopes = ["workboard:read", "workboard:write"];
+const serverInfo = {
+  name: "workboard-mcp",
+  version: "0.1.0",
+};
 
 export async function workboardProtectedResourceHandler() {
   const metadata = await resourceClient.getProtectedResourceMetadata({
@@ -30,24 +35,6 @@ export async function workboardProtectedResourceHandler() {
   });
 }
 
-const mcpHandler = createMcpHandler(
-  (server) => {
-    registerWorkboardTools(server);
-  },
-  {
-    serverInfo: {
-      name: "workboard-mcp",
-      version: "0.1.0",
-    },
-  },
-  {
-    basePath: "",
-    disableSse: true,
-    maxDuration: 60,
-    verboseLogs: process.env.MCP_VERBOSE_LOGS === "true",
-  },
-);
-
 export const authenticatedMcpHandler = betterAuthMcpHandler(
   {
     jwksUrl: `${getAuthIssuer()}/jwks`,
@@ -58,10 +45,30 @@ export const authenticatedMcpHandler = betterAuthMcpHandler(
     scopes: ["workboard:read"],
   },
   (request, payload) => {
-    request.auth = authInfoFromJwtPayload(request, payload);
-    return mcpHandler(request);
+    const authInfo = authInfoFromJwtPayload(request, payload);
+    (request as Request & { auth?: AuthInfo }).auth = authInfo;
+    return workboardMcpHandler(request, authInfo);
   },
 );
+
+async function workboardMcpHandler(request: Request, authInfo: AuthInfo) {
+  const server = new McpServer(serverInfo);
+  registerWorkboardTools(server);
+
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    enableJsonResponse: true,
+    sessionIdGenerator: undefined,
+  });
+
+  transport.onerror = (error) => {
+    if (process.env.MCP_VERBOSE_LOGS === "true") {
+      console.error("[workboard-mcp-transport-error]", error);
+    }
+  };
+
+  await server.connect(transport);
+  return transport.handleRequest(request, { authInfo });
+}
 
 function authInfoFromJwtPayload(
   request: Request,
