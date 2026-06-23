@@ -30,7 +30,7 @@ app.get("/", (c) =>
 
 app.get("/health", (c) => c.json({ ok: true }));
 
-app.on(["GET", "POST"], "/api/auth/*", (c) => auth.handler(c.req.raw));
+app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
 app.options("/.well-known/oauth-authorization-server", (c) =>
   metadataOptions(),
@@ -52,13 +52,13 @@ app.get("/.well-known/openid-configuration/*", (c) =>
 );
 app.options("/.well-known/oauth-protected-resource", (c) => metadataOptions());
 app.get("/.well-known/oauth-protected-resource", (c) =>
-  workboardProtectedResourceHandler(c.req.raw),
+  workboardProtectedResourceHandler(),
 );
 app.options("/.well-known/oauth-protected-resource/*", (c) =>
   metadataOptions(),
 );
 app.get("/.well-known/oauth-protected-resource/*", (c) =>
-  workboardProtectedResourceHandler(c.req.raw),
+  workboardProtectedResourceHandler(),
 );
 
 app.get("/oauth/login", (c) =>

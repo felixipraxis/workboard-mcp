@@ -1,17 +1,34 @@
-import { verifyAccessToken } from "better-auth/oauth2";
-import {
-  createMcpHandler,
-  protectedResourceHandler,
-  withMcpAuth,
-} from "mcp-handler";
+import { mcpHandler as betterAuthMcpHandler } from "@better-auth/oauth-provider";
+import { oauthProviderResourceClient } from "@better-auth/oauth-provider/resource-client";
 import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
+import type { JWTPayload } from "jose";
+import { createMcpHandler } from "mcp-handler";
+import { auth } from "../auth/auth";
 import { getAuthIssuer, getMcpResourceUrl } from "../config";
 import { registerWorkboardTools } from "./workboard";
 
-export const workboardProtectedResourceHandler = protectedResourceHandler({
-  authServerUrls: [getAuthIssuer()],
-  resourceUrl: getMcpResourceUrl(),
-});
+export const workboardMcpResourceMetadataPath =
+  "/.well-known/oauth-protected-resource/mcp";
+
+const resourceClient = oauthProviderResourceClient(auth).getActions();
+const workboardMcpScopes = ["workboard:read", "workboard:write"];
+
+export async function workboardProtectedResourceHandler() {
+  const metadata = await resourceClient.getProtectedResourceMetadata({
+    resource: getMcpResourceUrl(),
+    authorization_servers: [getAuthIssuer()],
+    bearer_methods_supported: ["header"],
+    scopes_supported: workboardMcpScopes,
+  });
+
+  return new Response(JSON.stringify(metadata), {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Cache-Control": "public, max-age=3600",
+      "Content-Type": "application/json",
+    },
+  });
+}
 
 const mcpHandler = createMcpHandler(
   (server) => {
@@ -31,35 +48,29 @@ const mcpHandler = createMcpHandler(
   },
 );
 
-export const authenticatedMcpHandler = withMcpAuth(
-  mcpHandler,
-  verifyMcpBearerToken,
+export const authenticatedMcpHandler = betterAuthMcpHandler(
   {
-    required: true,
-    resourceMetadataPath: "/.well-known/oauth-protected-resource",
-    resourceUrl: new URL(getMcpResourceUrl()).origin,
+    jwksUrl: `${getAuthIssuer()}/jwks`,
+    verifyOptions: {
+      audience: getMcpResourceUrl(),
+      issuer: getAuthIssuer(),
+    },
+    scopes: ["workboard:read"],
+  },
+  (request, payload) => {
+    request.auth = authInfoFromJwtPayload(request, payload);
+    return mcpHandler(request);
   },
 );
 
-async function verifyMcpBearerToken(
-  _request: Request,
-  bearerToken?: string,
-): Promise<AuthInfo | undefined> {
-  if (!bearerToken) return undefined;
-
-  const payload = await verifyAccessToken(bearerToken, {
-    jwksUrl: `${getAuthIssuer()}/jwks`,
-    verifyOptions: {
-      issuer: getAuthIssuer(),
-      audience: getMcpResourceUrl(),
-    },
-  });
-
-  const userId = typeof payload.sub === "string" ? payload.sub : undefined;
-  if (!userId) return undefined;
+function authInfoFromJwtPayload(
+  request: Request,
+  payload: JWTPayload,
+): AuthInfo {
+  const userId = stringClaim(payload.sub);
 
   return {
-    token: bearerToken,
+    token: bearerToken(request.headers.get("authorization")) ?? "",
     clientId:
       stringClaim(payload.client_id) ??
       stringClaim(payload.azp) ??
@@ -67,10 +78,16 @@ async function verifyMcpBearerToken(
     scopes: stringClaim(payload.scope)?.split(/\s+/).filter(Boolean) ?? [],
     expiresAt: typeof payload.exp === "number" ? payload.exp : undefined,
     resource: new URL(getMcpResourceUrl()),
-    extra: { userId },
+    extra: userId ? { userId } : {},
   };
 }
 
 function stringClaim(value: unknown) {
   return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function bearerToken(value: string | null) {
+  if (!value) return undefined;
+  const match = /^Bearer\s+(.+)$/i.exec(value);
+  return match?.[1];
 }

@@ -38,7 +38,8 @@ describe("OAuth browser pages", () => {
       workboardProtectedResourceHandler: () => new Response("{}"),
     }));
     vi.doMock("mcp-handler", () => ({
-      metadataCorsOptionsRequestHandler: () => () => new Response(null, { status: 204 }),
+      metadataCorsOptionsRequestHandler: () => () =>
+        new Response(null, { status: 204 }),
     }));
 
     const { app } = await import("./api");
