@@ -73,7 +73,7 @@ export async function verifyWorkboardToken(input: {
 }) {
   const output = await callWorkboardOperation({
     operation: {
-      name: "workboard_v1_get_user",
+      name: "v1_get_user",
       version: "v1",
       method: "GET",
       path: "/user",

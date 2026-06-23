@@ -4,6 +4,8 @@ import { jsonSchemaToZod } from "./json-schema-to-zod";
 import { workboardOperations } from "./operations";
 
 describe("workboardOperations", () => {
+  const eveConnectionPrefix = "workboard__";
+
   it("wraps every documented Workboard v1 and v2 operation", () => {
     expect(workboardOperations).toHaveLength(63);
     expect(workboardOperations.filter((operation) => operation.version === "v1")).toHaveLength(45);
@@ -14,7 +16,8 @@ describe("workboardOperations", () => {
     const names = new Set<string>();
 
     for (const operation of workboardOperations) {
-      expect(operation.name).toMatch(/^workboard_v[12]_[a-z0-9_-]+$/);
+      expect(operation.name).toMatch(/^v[12]_[a-z0-9_-]+$/);
+      expect(`${eveConnectionPrefix}${operation.name}`.length).toBeLessThanOrEqual(64);
       expect(names.has(operation.name)).toBe(false);
       names.add(operation.name);
 
@@ -37,7 +40,7 @@ describe("workboardOperations", () => {
 
   it("validates the direct Workboard activity response body, not the old transport envelope", () => {
     const operation = workboardOperations.find(
-      (item) => item.name === "workboard_v1_get_activity",
+      (item) => item.name === "v1_get_activity",
     );
 
     expect(operation).toBeDefined();

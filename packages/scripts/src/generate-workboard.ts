@@ -390,7 +390,7 @@ function makeToolName(
 ) {
   if (operation.operationId) {
     return normalizeName(
-      `workboard_${version}_${operation.operationId.replace(/Controller_/g, "")}`,
+      `${version}_${operation.operationId.replace(/Controller_/g, "")}`,
     );
   }
 
@@ -403,7 +403,7 @@ function makeToolName(
     })
     .join("_");
 
-  return normalizeName(`workboard_${version}_${method}_${pathPart || "root"}`);
+  return normalizeName(`${version}_${method}_${pathPart || "root"}`);
 }
 
 function uniqueName(name: string, seen: Set<string>) {

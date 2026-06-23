@@ -5,7 +5,7 @@ import type { WorkboardOperation } from "./types";
 
 export const workboardOperations = [
   {
-    "name": "workboard_v1_get_user",
+    "name": "v1_get_user",
     "version": "v1",
     "method": "GET",
     "path": "/user",
@@ -428,7 +428,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_user",
+    "name": "v1_post_user",
     "version": "v1",
     "method": "POST",
     "path": "/user",
@@ -704,7 +704,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_patch_user",
+    "name": "v1_patch_user",
     "version": "v1",
     "method": "PATCH",
     "path": "/user",
@@ -764,7 +764,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_user_by_user_id_path",
+    "name": "v1_get_user_by_user_id_path",
     "version": "v1",
     "method": "GET",
     "path": "/user/{user_id_path}",
@@ -1002,7 +1002,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_put_user_by_user_id_path",
+    "name": "v1_put_user_by_user_id_path",
     "version": "v1",
     "method": "PUT",
     "path": "/user/{user_id_path}",
@@ -1315,7 +1315,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_user_by_user_id_path_goal",
+    "name": "v1_get_user_by_user_id_path_goal",
     "version": "v1",
     "method": "GET",
     "path": "/user/{user_id_path}/goal",
@@ -1743,7 +1743,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_user_by_user_id_path_goal_by_goal_id_path",
+    "name": "v1_get_user_by_user_id_path_goal_by_goal_id_path",
     "version": "v1",
     "method": "GET",
     "path": "/user/{user_id_path}/goal/{goal_id_path}",
@@ -2166,7 +2166,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_team",
+    "name": "v1_get_team",
     "version": "v1",
     "method": "GET",
     "path": "/team",
@@ -2409,7 +2409,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_team",
+    "name": "v1_post_team",
     "version": "v1",
     "method": "POST",
     "path": "/team",
@@ -2606,7 +2606,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_patch_team",
+    "name": "v1_patch_team",
     "version": "v1",
     "method": "PATCH",
     "path": "/team",
@@ -2653,7 +2653,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_team_by_team_id_path",
+    "name": "v1_get_team_by_team_id_path",
     "version": "v1",
     "method": "GET",
     "path": "/team/{team_id_path}",
@@ -2794,7 +2794,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_put_team_by_team_id_path",
+    "name": "v1_put_team_by_team_id_path",
     "version": "v1",
     "method": "PUT",
     "path": "/team/{team_id_path}",
@@ -2999,7 +2999,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_team_by_team_id_path_workstream",
+    "name": "v1_get_team_by_team_id_path_workstream",
     "version": "v1",
     "method": "GET",
     "path": "/team/{team_id_path}/workstream",
@@ -3224,7 +3224,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_team_by_team_id_path_activity",
+    "name": "v1_get_team_by_team_id_path_activity",
     "version": "v1",
     "method": "GET",
     "path": "/team/{team_id_path}/activity",
@@ -3510,7 +3510,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_goal",
+    "name": "v1_get_goal",
     "version": "v1",
     "method": "GET",
     "path": "/goal",
@@ -4572,7 +4572,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_goal",
+    "name": "v1_post_goal",
     "version": "v1",
     "method": "POST",
     "path": "/goal",
@@ -4843,7 +4843,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_goal_by_goal_id_path",
+    "name": "v1_get_goal_by_goal_id_path",
     "version": "v1",
     "method": "GET",
     "path": "/goal/{goal_id_path}",
@@ -5892,7 +5892,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_goal_by_goal_id_path_metric_by_metric_id_path",
+    "name": "v1_get_goal_by_goal_id_path_metric_by_metric_id_path",
     "version": "v1",
     "method": "GET",
     "path": "/goal/{goal_id_path}/metric/{metric_id_path}",
@@ -6266,7 +6266,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_goal_by_goal_id_path_pillars",
+    "name": "v1_get_goal_by_goal_id_path_pillars",
     "version": "v1",
     "method": "GET",
     "path": "/goal/{goal_id_path}/pillars",
@@ -6503,7 +6503,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_goal_by_goal_id_path_alignment",
+    "name": "v1_get_goal_by_goal_id_path_alignment",
     "version": "v1",
     "method": "GET",
     "path": "/goal/{goal_id_path}/alignment",
@@ -6660,7 +6660,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_metric",
+    "name": "v1_get_metric",
     "version": "v1",
     "method": "GET",
     "path": "/metric",
@@ -7596,7 +7596,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_metric_by_metric_id_path",
+    "name": "v1_get_metric_by_metric_id_path",
     "version": "v1",
     "method": "GET",
     "path": "/metric/{metric_id_path}",
@@ -8098,7 +8098,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_put_metric_by_metric_id_path",
+    "name": "v1_put_metric_by_metric_id_path",
     "version": "v1",
     "method": "PUT",
     "path": "/metric/{metric_id_path}",
@@ -8344,7 +8344,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_put_metric_by_metric_id_path_confidence",
+    "name": "v1_put_metric_by_metric_id_path_confidence",
     "version": "v1",
     "method": "PUT",
     "path": "/metric/{metric_id_path}/confidence",
@@ -8857,7 +8857,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_metric_by_metric_id_path_tags",
+    "name": "v1_get_metric_by_metric_id_path_tags",
     "version": "v1",
     "method": "GET",
     "path": "/metric/{metric_id_path}/tags",
@@ -8957,7 +8957,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_put_metric_by_metric_id_path_tags",
+    "name": "v1_put_metric_by_metric_id_path_tags",
     "version": "v1",
     "method": "PUT",
     "path": "/metric/{metric_id_path}/tags",
@@ -9024,7 +9024,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_delete_metric_by_metric_id_path_tags",
+    "name": "v1_delete_metric_by_metric_id_path_tags",
     "version": "v1",
     "method": "DELETE",
     "path": "/metric/{metric_id_path}/tags",
@@ -9096,7 +9096,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_metric_krtags",
+    "name": "v1_get_metric_krtags",
     "version": "v1",
     "method": "GET",
     "path": "/metric/krtags",
@@ -9210,7 +9210,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_metric_tags",
+    "name": "v1_get_metric_tags",
     "version": "v1",
     "method": "GET",
     "path": "/metric/tags",
@@ -9309,7 +9309,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_metric_tags",
+    "name": "v1_post_metric_tags",
     "version": "v1",
     "method": "POST",
     "path": "/metric/tags",
@@ -9373,7 +9373,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_tags",
+    "name": "v1_get_tags",
     "version": "v1",
     "method": "GET",
     "path": "/tags",
@@ -9490,7 +9490,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_tags_by_tag_id_path",
+    "name": "v1_get_tags_by_tag_id_path",
     "version": "v1",
     "method": "GET",
     "path": "/tags/{tag_id_path}",
@@ -9597,7 +9597,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_activity",
+    "name": "v1_get_activity",
     "version": "v1",
     "method": "GET",
     "path": "/activity",
@@ -9986,7 +9986,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_activity",
+    "name": "v1_post_activity",
     "version": "v1",
     "method": "POST",
     "path": "/activity",
@@ -10253,7 +10253,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_activity_by_ai_id_path",
+    "name": "v1_get_activity_by_ai_id_path",
     "version": "v1",
     "method": "GET",
     "path": "/activity/{ai_id_path}",
@@ -10455,7 +10455,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_put_activity_by_ai_id_path",
+    "name": "v1_put_activity_by_ai_id_path",
     "version": "v1",
     "method": "PUT",
     "path": "/activity/{ai_id_path}",
@@ -10735,7 +10735,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_workstream",
+    "name": "v1_get_workstream",
     "version": "v1",
     "method": "GET",
     "path": "/workstream",
@@ -10951,7 +10951,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_workstream",
+    "name": "v1_post_workstream",
     "version": "v1",
     "method": "POST",
     "path": "/workstream",
@@ -11042,7 +11042,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_put_workstream_by_ws_id_path",
+    "name": "v1_put_workstream_by_ws_id_path",
     "version": "v1",
     "method": "PUT",
     "path": "/workstream/{ws_id_path}",
@@ -11165,7 +11165,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_patch_workstream_by_ws_id_path",
+    "name": "v1_patch_workstream_by_ws_id_path",
     "version": "v1",
     "method": "PATCH",
     "path": "/workstream/{ws_id_path}",
@@ -11212,7 +11212,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_workstream_by_ws_id_path_activity",
+    "name": "v1_get_workstream_by_ws_id_path_activity",
     "version": "v1",
     "method": "GET",
     "path": "/workstream/{ws_id_path}/activity",
@@ -11498,7 +11498,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_get_stream",
+    "name": "v1_get_stream",
     "version": "v1",
     "method": "GET",
     "path": "/stream",
@@ -11592,7 +11592,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_stream",
+    "name": "v1_post_stream",
     "version": "v1",
     "method": "POST",
     "path": "/stream",
@@ -11735,7 +11735,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_stream_by_stream_id",
+    "name": "v1_post_stream_by_stream_id",
     "version": "v1",
     "method": "POST",
     "path": "/stream/{stream_id}",
@@ -11930,7 +11930,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v1_post_hook_by_webhook_hash",
+    "name": "v1_post_hook_by_webhook_hash",
     "version": "v1",
     "method": "POST",
     "path": "/hook/{webhook_hash}",
@@ -12018,7 +12018,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesget_definitions",
+    "name": "v2_custom_attributesget_definitions",
     "version": "v2",
     "method": "GET",
     "path": "/attributes/definitions",
@@ -12125,7 +12125,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesget_objects_for_attribute",
+    "name": "v2_custom_attributesget_objects_for_attribute",
     "version": "v2",
     "method": "GET",
     "path": "/attributes/{attributeId}/objects",
@@ -12342,7 +12342,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesget_objective_attributes",
+    "name": "v2_custom_attributesget_objective_attributes",
     "version": "v2",
     "method": "GET",
     "path": "/attributes/objectives/{id}",
@@ -12475,7 +12475,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesset_objective_attribute_value",
+    "name": "v2_custom_attributesset_objective_attribute_value",
     "version": "v2",
     "method": "PUT",
     "path": "/attributes/objectives/{id}/{attributeId}",
@@ -12559,7 +12559,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributescreate_objective_attribute_value",
+    "name": "v2_custom_attributescreate_objective_attribute_value",
     "version": "v2",
     "method": "POST",
     "path": "/attributes/objectives/{id}/{attributeId}",
@@ -12643,7 +12643,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesdelete_objective_attribute_value",
+    "name": "v2_custom_attributesdelete_objective_attribute_value",
     "version": "v2",
     "method": "DELETE",
     "path": "/attributes/objectives/{id}/{attributeId}",
@@ -12695,7 +12695,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesget_key_result_attributes",
+    "name": "v2_custom_attributesget_key_result_attributes",
     "version": "v2",
     "method": "GET",
     "path": "/attributes/key-results/{id}",
@@ -12828,7 +12828,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesset_key_result_attribute_value",
+    "name": "v2_custom_attributesset_key_result_attribute_value",
     "version": "v2",
     "method": "PUT",
     "path": "/attributes/key-results/{id}/{attributeId}",
@@ -12912,7 +12912,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributescreate_key_result_attribute_value",
+    "name": "v2_custom_attributescreate_key_result_attribute_value",
     "version": "v2",
     "method": "POST",
     "path": "/attributes/key-results/{id}/{attributeId}",
@@ -12996,7 +12996,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesdelete_key_result_attribute_value",
+    "name": "v2_custom_attributesdelete_key_result_attribute_value",
     "version": "v2",
     "method": "DELETE",
     "path": "/attributes/key-results/{id}/{attributeId}",
@@ -13048,7 +13048,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesget_work_item_attributes",
+    "name": "v2_custom_attributesget_work_item_attributes",
     "version": "v2",
     "method": "GET",
     "path": "/attributes/work-items/{id}",
@@ -13181,7 +13181,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesset_work_item_attribute_value",
+    "name": "v2_custom_attributesset_work_item_attribute_value",
     "version": "v2",
     "method": "PUT",
     "path": "/attributes/work-items/{id}/{attributeId}",
@@ -13265,7 +13265,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributescreate_work_item_attribute_value",
+    "name": "v2_custom_attributescreate_work_item_attribute_value",
     "version": "v2",
     "method": "POST",
     "path": "/attributes/work-items/{id}/{attributeId}",
@@ -13349,7 +13349,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesdelete_work_item_attribute_value",
+    "name": "v2_custom_attributesdelete_work_item_attribute_value",
     "version": "v2",
     "method": "DELETE",
     "path": "/attributes/work-items/{id}/{attributeId}",
@@ -13401,7 +13401,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesget_user_attributes",
+    "name": "v2_custom_attributesget_user_attributes",
     "version": "v2",
     "method": "GET",
     "path": "/attributes/users/{id}",
@@ -13534,7 +13534,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesset_user_attribute_value",
+    "name": "v2_custom_attributesset_user_attribute_value",
     "version": "v2",
     "method": "PUT",
     "path": "/attributes/users/{id}/{attributeId}",
@@ -13618,7 +13618,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributescreate_user_attribute_value",
+    "name": "v2_custom_attributescreate_user_attribute_value",
     "version": "v2",
     "method": "POST",
     "path": "/attributes/users/{id}/{attributeId}",
@@ -13702,7 +13702,7 @@ export const workboardOperations = [
     }
   },
   {
-    "name": "workboard_v2_custom_attributesdelete_user_attribute_value",
+    "name": "v2_custom_attributesdelete_user_attribute_value",
     "version": "v2",
     "method": "DELETE",
     "path": "/attributes/users/{id}/{attributeId}",

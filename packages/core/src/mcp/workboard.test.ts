@@ -42,7 +42,7 @@ describe("Workboard MCP tools", () => {
     vi.doMock("../workboard/operations", () => ({
       workboardOperations: [
         {
-          name: "workboard_v1_get_activity",
+          name: "v1_get_activity",
           version: "v1",
           method: "GET",
           path: "/activity",

@@ -50,7 +50,7 @@ describe("Workboard API client", () => {
     const { callWorkboardOperation } = await import("./client");
 
     const operation = {
-      name: "workboard_v2_update_thing",
+      name: "v2_update_thing",
       version: "v2",
       method: "PUT",
       path: "/things/{thingId}",
@@ -127,7 +127,7 @@ describe("Workboard API client", () => {
     await expect(
       callWorkboardOperation({
         operation: {
-          name: "workboard_v1_get_activity",
+          name: "v1_get_activity",
           version: "v1",
           method: "GET",
           path: "/activity",
@@ -182,7 +182,7 @@ describe("Workboard API client", () => {
     const { callWorkboardOperation, WorkboardApiError } = await import("./client");
 
     const operation = {
-      name: "workboard_v1_get_activity",
+      name: "v1_get_activity",
       version: "v1",
       method: "GET",
       path: "/activity",
